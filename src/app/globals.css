@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-brand: #00af87;
+  --color-brand: #053a1a;
   --color-brand-dark: #002b11;
   --color-brand-accent: #00eb5b;
 
@@ -19,6 +19,7 @@
 
   /* Typography */
   --font-sans: var(--font-trip-sans);
+  --font-acworth: 'Acworth', serif;
 
   /* Radii */
   --radius-pill: 9999px;
@@ -65,18 +66,18 @@
   --card-foreground: #2C241B;
   --popover: #FDFBF7;
   --popover-foreground: #2C241B;
-  --primary: #00af87;
+  --primary: #053a1a;
   --primary-foreground: #ffffff;
   --secondary: #E6E1D6;
   --secondary-foreground: #2C241B;
   --muted: #E6E1D6;
   --muted-foreground: #6B5E51;
   --accent: #E6E1D6;
-  --accent-foreground: #00af87;
+  --accent-foreground: #053a1a;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #D8D2C4;
   --input: #D8D2C4;
-  --ring: #00af87;
+  --ring: #053a1a;
   --radius: 0.625rem;
 
   --sidebar: oklch(0.985 0 0);
@@ -96,7 +97,7 @@
   --card-foreground: #ededed;
   --popover: #0a0a0a;
   --popover-foreground: #ededed;
-  --primary: #00af87;
+  --primary: #053a1a;
   --primary-foreground: #ffffff;
   --secondary: #27272a;
   --secondary-foreground: #ededed;
@@ -107,7 +108,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: #27272a;
   --input: #27272a;
-  --ring: #00af87;
+  --ring: #053a1a;
 }
 
 @layer base {
@@ -117,4 +118,13 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Acworth';
+  src: url('https://fonts.cdnfonts.com/s/15399/Acworth.woff2') format('woff2'),
+       url('https://fonts.cdnfonts.com/s/15399/Acworth.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }

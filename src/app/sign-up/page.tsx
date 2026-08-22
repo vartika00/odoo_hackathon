@@ -1,58 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check, Sparkles } from "lucide-react";
 import {
   signInWithPopup,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+  updateProfile,
   AuthError,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useAuth } from "@/lib/AuthContext";
-import { useEffect } from "react";
 
-const DESTINATIONS = [
-  "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80",
+const HERO_IMAGE = "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80";
+
+const PERKS = [
+  "Save trips & build itineraries",
+  "Write & read authentic reviews",
+  "Get personalised recommendations",
+  "Access exclusive member deals",
 ];
 
 function getErrorMessage(error: AuthError): string {
   switch (error.code) {
-    case "auth/user-not-found":
-    case "auth/wrong-password":
-    case "auth/invalid-credential":
-    case "auth/invalid-login-credentials":
-      return "Invalid email or password.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-    case "auth/user-disabled":
-      return "This account has been disabled.";
-    case "auth/network-request-failed":
-      return "Network error. Check your connection and try again.";
+    case "auth/email-already-in-use":
+      return "An account with this email already exists.";
+    case "auth/weak-password":
+      return "Password must be at least 6 characters.";
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
     case "auth/popup-closed-by-user":
-    case "auth/cancelled-popup-request":
       return "";
     default:
-      return `Error: ${error.code}`;
+      return "Something went wrong. Please try again.";
   }
 }
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
-  const [resetSent, setResetSent] = useState(false);
-  const [activeImg] = useState(0);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -60,6 +56,10 @@ export default function SignInPage() {
   }, [user, loading, router]);
 
   if (loading || user) return null;
+
+  const passwordStrength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
+  const strengthLabel = ["", "Weak", "Good", "Strong"][passwordStrength];
+  const strengthColor = ["", "bg-red-400", "bg-amber-400", "bg-[#053a1a]"][passwordStrength];
 
   const handleGoogle = async () => {
     setError("");
@@ -75,26 +75,14 @@ export default function SignInPage() {
     }
   };
 
-  const handleForgotPassword = async () => {
-    if (!email.trim()) {
-      setError("Enter your email above first, then click Forgot password.");
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email.trim());
-      setResetSent(true);
-      setError("");
-    } catch {
-      setError("Could not send reset email. Check the address and try again.");
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreed) return;
     setError("");
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(user, { displayName: name });
       router.push("/");
     } catch (err) {
       setError(getErrorMessage(err as AuthError));
@@ -107,14 +95,8 @@ export default function SignInPage() {
     <div className="min-h-screen flex">
       {/* Left Panel — Hero Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <Image
-          src={DESTINATIONS[activeImg]}
-          alt="Travel destination"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#053a1a]/80 via-[#053a1a]/50 to-black/60" />
+        <Image src={HERO_IMAGE} alt="Travel destination" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#053a1a]/85 via-[#053a1a]/55 to-black/60" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <Link href="/" className="flex items-center gap-3">
@@ -127,43 +109,47 @@ export default function SignInPage() {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold">
               <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-              Trusted by 50M+ travelers worldwide
+              Join 50M+ explorers today
             </div>
             <h2 className="text-4xl xl:text-5xl font-black text-white leading-tight">
-              Your next great<br />
-              <span className="text-[#a8e6c1]">adventure</span> awaits.
+              Start your<br />
+              <span className="text-[#a8e6c1]">journey</span> with us.
             </h2>
             <p className="text-white/70 text-base font-medium max-w-sm leading-relaxed">
-              Discover hidden gems, read authentic reviews, and plan unforgettable journeys with Atlas.
+              Create your free account and unlock a world of travel inspiration, reviews, and deals.
             </p>
-            <div className="flex items-center gap-6 pt-2">
-              {[
-                { value: "200+", label: "Countries" },
-                { value: "1.2M+", label: "Reviews" },
-                { value: "50M+", label: "Travelers" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-xl font-black text-white">{stat.value}</div>
-                  <div className="text-xs text-white/60 font-medium">{stat.label}</div>
-                </div>
+            <ul className="space-y-3">
+              {PERKS.map((perk) => (
+                <li key={perk} className="flex items-center gap-3 text-white/85 text-sm font-medium">
+                  <div className="h-5 w-5 rounded-full bg-[#a8e6c1]/20 border border-[#a8e6c1]/40 flex items-center justify-center shrink-0">
+                    <Check className="h-3 w-3 text-[#a8e6c1]" />
+                  </div>
+                  {perk}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          <div className="flex items-center gap-3">
-            {DESTINATIONS.map((src, i) => (
-              <div key={i} className={`relative rounded-xl overflow-hidden border-2 transition-all ${i === activeImg ? "border-white w-20 h-14" : "border-white/30 w-14 h-10 opacity-60"}`}>
-                <Image src={src} alt="" fill className="object-cover" />
+          <div className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-4">
+            <p className="text-white/80 text-sm font-medium italic leading-relaxed">
+              "Atlas completely changed how I plan my trips. The reviews are so authentic!"
+            </p>
+            <div className="flex items-center gap-2 mt-3">
+              <div className="h-7 w-7 rounded-full overflow-hidden border border-white/30">
+                <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="User" width={28} height={28} className="object-cover" />
               </div>
-            ))}
-            <span className="text-white/50 text-xs font-medium ml-1">+200 destinations</span>
+              <div>
+                <div className="text-white text-xs font-bold">Marcus Chen</div>
+                <div className="text-white/50 text-[11px]">Singapore • 42 reviews</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Right Panel — Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-[#F4F1EA] px-6 py-12">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-7">
 
           <div className="flex lg:hidden justify-center">
             <Link href="/" className="flex items-center gap-2.5">
@@ -175,19 +161,14 @@ export default function SignInPage() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Welcome back</h1>
-            <p className="text-gray-500 text-sm font-medium mt-1.5">Sign in to continue your journey</p>
+            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Create your account</h1>
+            <p className="text-gray-500 text-sm font-medium mt-1.5">Free forever. No credit card required.</p>
           </div>
 
-          {/* Banners */}
+          {/* Error banner */}
           {error && (
             <div className="px-4 py-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
               {error}
-            </div>
-          )}
-          {resetSent && (
-            <div className="px-4 py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium">
-              ✓ Password reset email sent — check your inbox.
             </div>
           )}
 
@@ -217,11 +198,28 @@ export default function SignInPage() {
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">or sign in with email</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">or sign up with email</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Jane Doe"
+                  required
+                  className="w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#053a1a] focus:ring-2 focus:ring-[#053a1a]/10 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Email</label>
               <div className="relative">
@@ -237,37 +235,64 @@ export default function SignInPage() {
               </div>
             </div>
 
+            {/* Password */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
-                <button type="button" onClick={handleForgotPassword} className="text-xs font-semibold text-[#053a1a] hover:underline">Forgot password?</button>
-              </div>
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Min. 8 characters"
                   required
+                  minLength={8}
                   className="w-full h-12 pl-10 pr-11 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#053a1a] focus:ring-2 focus:ring-[#053a1a]/10 transition-all"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {password.length > 0 && (
+                <div className="space-y-1">
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map((level) => (
+                      <div key={level} className={`h-1 flex-1 rounded-full transition-all ${level <= passwordStrength ? strengthColor : "bg-gray-200"}`} />
+                    ))}
+                  </div>
+                  <p className={`text-xs font-semibold ${passwordStrength === 1 ? "text-red-500" : passwordStrength === 2 ? "text-amber-500" : "text-[#053a1a]"}`}>
+                    {strengthLabel} password
+                  </p>
+                </div>
+              )}
             </div>
+
+            {/* Terms */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div
+                onClick={() => setAgreed(!agreed)}
+                className={`mt-0.5 h-5 w-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${agreed ? "bg-[#053a1a] border-[#053a1a]" : "border-gray-300 group-hover:border-[#053a1a]"}`}
+              >
+                {agreed && <Check className="h-3 w-3 text-white" />}
+              </div>
+              <span className="text-xs text-gray-500 leading-relaxed">
+                I agree to Atlas's{" "}
+                <Link href="#" className="text-[#053a1a] font-semibold hover:underline">Terms of Use</Link>
+                {" "}and{" "}
+                <Link href="#" className="text-[#053a1a] font-semibold hover:underline">Privacy Policy</Link>
+              </span>
+            </label>
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full h-12 rounded-2xl bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#053a1a]/20 transition-all active:scale-[0.98] disabled:opacity-70 mt-2"
+              disabled={isLoading || !agreed}
+              className="w-full h-12 rounded-2xl bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#053a1a]/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
               ) : (
                 <>
-                  <span>Sign In</span>
+                  <span>Create Account</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -275,14 +300,8 @@ export default function SignInPage() {
           </form>
 
           <p className="text-center text-sm text-gray-500">
-            New to Atlas?{" "}
-            <Link href="/sign-up" className="font-bold text-[#053a1a] hover:underline underline-offset-4">Create an account</Link>
-          </p>
-
-          <p className="text-xs text-center text-gray-400 leading-relaxed">
-            By continuing, you agree to our{" "}
-            <Link href="#" className="underline hover:text-gray-600">Terms of Use</Link>{" "}and{" "}
-            <Link href="#" className="underline hover:text-gray-600">Privacy Policy</Link>.
+            Already have an account?{" "}
+            <Link href="/sign-in" className="font-bold text-[#053a1a] hover:underline underline-offset-4">Sign in</Link>
           </p>
         </div>
       </div>

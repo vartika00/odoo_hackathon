@@ -69,7 +69,7 @@ export function FeaturedExperiences() {
     <section className="w-full py-8 sm:py-12 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00af87] uppercase tracking-wider mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#053a1a] uppercase tracking-wider mb-1">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Unforgettable Moments</span>
           </div>
@@ -82,7 +82,7 @@ export function FeaturedExperiences() {
         </div>
         <Link
           href="/listings?type=ATTRACTION"
-          className="text-xs sm:text-sm font-bold text-[#00af87] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
+          className="text-xs sm:text-sm font-bold text-[#053a1a] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
         >
           <span>View all experiences</span>
           &rarr;
@@ -96,7 +96,7 @@ export function FeaturedExperiences() {
             <Link
               key={item.id}
               href={`/listings/${item.id}`}
-              className="group bg-white rounded-2xl overflow-hidden border border-gray-200/90 hover:border-[#00af87]/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="group bg-white rounded-2xl overflow-hidden border border-gray-200/90 hover:border-[#053a1a]/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 {/* Image Container */}
@@ -133,16 +133,16 @@ export function FeaturedExperiences() {
                   <div className="text-xs font-semibold text-gray-500 mb-1">
                     {item.location}
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base text-gray-900 line-clamp-2 leading-snug group-hover:text-[#00af87] transition-colors">
+                  <h3 className="font-bold text-sm sm:text-base text-gray-900 line-clamp-2 leading-snug group-hover:text-[#053a1a] transition-colors" style={{ fontFamily: 'var(--font-acworth)' }}>
                     {item.title}
                   </h3>
 
                   {/* Rating Bubbles */}
                   <div className="mt-2.5 flex items-center gap-2 text-xs">
                     <div className="flex items-center gap-1 font-bold text-gray-900">
-                      <div className="flex gap-0.5 text-[#00af87]">
+                      <div className="flex gap-0.5 text-[#053a1a]">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className="h-2.5 w-2.5 rounded-full bg-[#00af87] inline-block" />
+                          <span key={i} className="h-2.5 w-2.5 rounded-full bg-[#053a1a] inline-block" />
                         ))}
                       </div>
                       <span>{item.rating}</span>
@@ -174,7 +174,7 @@ export function FeaturedExperiences() {
                     <span className="text-xs font-normal text-gray-500">/ person</span>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#00af87] group-hover:underline">
+                <span className="text-xs font-bold text-[#053a1a] group-hover:underline">
                   Check deals &rarr;
                 </span>
               </div>

@@ -108,7 +108,7 @@ export function Footer() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-start gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#00af87]/10 text-[#00af87] shrink-0">
+              <div className="p-3 rounded-2xl bg-[#053a1a]/10 text-[#053a1a] shrink-0">
                 <ShieldCheck className="h-6 w-6" />
               </div>
               <div>
@@ -118,7 +118,7 @@ export function Footer() {
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#00af87]/10 text-[#00af87] shrink-0">
+              <div className="p-3 rounded-2xl bg-[#053a1a]/10 text-[#053a1a] shrink-0">
                 <Award className="h-6 w-6" />
               </div>
               <div>
@@ -128,7 +128,7 @@ export function Footer() {
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#00af87]/10 text-[#00af87] shrink-0">
+              <div className="p-3 rounded-2xl bg-[#053a1a]/10 text-[#053a1a] shrink-0">
                 <Heart className="h-6 w-6 text-rose-500" />
               </div>
               <div>
@@ -138,7 +138,7 @@ export function Footer() {
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#00af87]/10 text-[#00af87] shrink-0">
+              <div className="p-3 rounded-2xl bg-[#053a1a]/10 text-[#053a1a] shrink-0">
                 <Smartphone className="h-6 w-6" />
               </div>
               <div>
@@ -218,7 +218,7 @@ export function Footer() {
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="w-full sm:w-auto bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-gray-800 outline-none focus:border-[#00af87] shadow-2xs"
+                className="w-full sm:w-auto bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-gray-800 outline-none focus:border-[#053a1a] shadow-2xs"
               >
                 <option value="USD ($)">USD ($) - US Dollar</option>
                 <option value="INR (₹)">INR (₹) - Indian Rupee</option>
@@ -237,7 +237,7 @@ export function Footer() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full sm:w-auto bg-white border border-gray-300 rounded-xl pl-8 pr-4 py-2 text-xs font-semibold text-gray-800 outline-none focus:border-[#00af87] shadow-2xs appearance-none"
+                  className="w-full sm:w-auto bg-white border border-gray-300 rounded-xl pl-8 pr-4 py-2 text-xs font-semibold text-gray-800 outline-none focus:border-[#053a1a] shadow-2xs appearance-none"
                 >
                   <option value="United States (English)">United States (English)</option>
                   <option value="India (English)">India (English)</option>

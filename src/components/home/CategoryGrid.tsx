@@ -75,14 +75,14 @@ export function CategoryGrid() {
             <Link
               key={cat.name}
               href={cat.href}
-              className="group p-4 sm:p-5 rounded-2xl bg-white border border-gray-200/90 hover:border-[#00af87] shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center justify-between min-h-[140px] sm:min-h-[160px]"
+              className="group p-4 sm:p-5 rounded-2xl bg-white border border-gray-200/90 hover:border-[#053a1a] shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center justify-between min-h-[140px] sm:min-h-[160px]"
             >
               <div className={`p-3 rounded-2xl ${cat.bg} transition-transform group-hover:scale-110`}>
                 <Icon className="h-6 w-6" />
               </div>
 
               <div className="mt-3">
-                <h3 className="font-black text-sm sm:text-base text-gray-900 group-hover:text-[#00af87] transition-colors">
+                <h3 className="font-black text-sm sm:text-base text-gray-900 group-hover:text-[#053a1a] transition-colors">
                   {cat.name}
                 </h3>
                 <span className="inline-block mt-1 text-[11px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">

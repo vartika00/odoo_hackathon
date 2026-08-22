@@ -121,7 +121,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#00af87] text-xs font-bold uppercase tracking-wide">
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#053a1a] text-xs font-bold uppercase tracking-wide">
                   {DETAIL_DATA.type}
                 </span>
                 <span className="text-xs font-semibold text-emerald-800">
@@ -129,16 +129,16 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-950 mt-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-950 mt-1" style={{ fontFamily: 'var(--font-acworth)' }}>
                 {DETAIL_DATA.name}
               </h1>
 
               {/* Rating & Location */}
               <div className="mt-2 flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                 <div className="flex items-center gap-1 font-extrabold text-gray-900">
-                  <div className="flex gap-0.5 text-[#00af87]">
+                  <div className="flex gap-0.5 text-[#053a1a]">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="h-3 w-3 rounded-full bg-[#00af87] inline-block" />
+                      <span key={i} className="h-3 w-3 rounded-full bg-[#053a1a] inline-block" />
                     ))}
                   </div>
                   <span>{DETAIL_DATA.rating.toFixed(1)}</span>
@@ -151,7 +151,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="mt-1 flex items-center gap-1.5 text-xs text-gray-500">
-                <MapPin className="h-3.5 w-3.5 text-[#00af87] shrink-0" />
+                <MapPin className="h-3.5 w-3.5 text-[#053a1a] shrink-0" />
                 <span>{DETAIL_DATA.location}</span>
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 </div>
                 <div className="p-3 bg-gray-50 rounded-2xl">
                   <span className="text-[10px] uppercase font-bold text-gray-400 block">Cleanliness</span>
-                  <span className="font-bold text-xs sm:text-sm text-[#00af87]">5.0 / 5.0 Rating</span>
+                  <span className="font-bold text-xs sm:text-sm text-[#053a1a]">5.0 / 5.0 Rating</span>
                 </div>
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   const Icon = item.icon;
                   return (
                     <div key={item.name} className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/80 border border-gray-100">
-                      <div className="p-2 rounded-xl bg-white text-[#00af87] shadow-2xs">
+                      <div className="p-2 rounded-xl bg-white text-[#053a1a] shadow-2xs">
                         <Icon className="h-5 w-5" />
                       </div>
                       <span className="font-bold text-xs sm:text-sm text-gray-800">{item.name}</span>
@@ -333,7 +333,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                   </p>
                 </div>
                 <Link href="/review">
-                  <Button className="rounded-full bg-[#00af87] hover:bg-[#009673] text-white text-xs font-bold px-5">
+                  <Button className="rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white text-xs font-bold px-5">
                     Write a Review
                   </Button>
                 </Link>
@@ -376,9 +376,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                       <span className="text-xs text-gray-400 font-medium">{rev.date}</span>
                     </div>
 
-                    <div className="flex text-[#00af87] gap-0.5">
+                    <div className="flex text-[#053a1a] gap-0.5">
                       {[...Array(rev.rating)].map((_, i) => (
-                        <span key={i} className="h-2.5 w-2.5 rounded-full bg-[#00af87] inline-block" />
+                        <span key={i} className="h-2.5 w-2.5 rounded-full bg-[#053a1a] inline-block" />
                       ))}
                     </div>
 
@@ -386,7 +386,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{rev.content}</p>
 
                     <div className="flex items-center gap-2 pt-1 text-xs text-gray-500">
-                      <button className="flex items-center gap-1 font-semibold hover:text-[#00af87]">
+                      <button className="flex items-center gap-1 font-semibold hover:text-[#053a1a]">
                         <ThumbsUp className="h-3.5 w-3.5" />
                         <span>Helpful ({rev.helpful})</span>
                       </button>
@@ -463,7 +463,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                     key={ota.name}
                     className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                       i === 0
-                        ? "bg-emerald-50/70 border-[#00af87] shadow-xs"
+                        ? "bg-emerald-50/70 border-[#053a1a] shadow-xs"
                         : "bg-white border-gray-200 hover:border-gray-300"
                     }`}
                   >
@@ -484,7 +484,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                       <Button
                         size="sm"
                         className={`rounded-full text-xs font-bold h-8 px-3 ${
-                          i === 0 ? "bg-[#00af87] hover:bg-[#009673] text-white" : "bg-black text-white hover:bg-gray-800"
+                          i === 0 ? "bg-[#053a1a] hover:bg-[#032b13] text-white" : "bg-black text-white hover:bg-gray-800"
                         }`}
                       >
                         View Deal
@@ -495,7 +495,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="pt-2 text-center text-xs text-gray-500 flex items-center justify-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#00af87]" />
+                <ShieldCheck className="h-4 w-4 text-[#053a1a]" />
                 <span>Price Match & Secure Booking Protected</span>
               </div>
             </div>
@@ -515,7 +515,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
 
         <Button
           onClick={() => alert("Redirecting to best booking deal...")}
-          className="rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-extrabold text-sm px-7 h-11 shadow-lg"
+          className="rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold text-sm px-7 h-11 shadow-lg"
         >
           View Deals ({DETAIL_DATA.otas.length})
         </Button>

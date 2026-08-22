@@ -46,11 +46,11 @@ export default function SharedItineraryPage() {
       <div className="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl bg-[#00af87] flex items-center justify-center text-white shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-[#053a1a] flex items-center justify-center text-white shadow-xs">
               <Compass className="w-4 h-4" />
             </div>
             <span className="font-black text-lg tracking-tight text-gray-900">
-              Atlas<span className="text-[#00af87]">.</span>
+              Atlas<span className="text-[#053a1a]">.</span>
             </span>
           </Link>
 
@@ -61,14 +61,14 @@ export default function SharedItineraryPage() {
               onClick={handleCopyLink}
               className="h-9 rounded-2xl text-xs font-bold border-gray-300 flex items-center gap-1.5"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-[#00af87]" /> : <Share2 className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-[#053a1a]" /> : <Share2 className="w-3.5 h-3.5" />}
               <span>{copied ? "Link Copied" : "Share"}</span>
             </Button>
 
             <Button
               size="sm"
               onClick={handleCloneTrip}
-              className="h-9 rounded-2xl text-xs font-bold bg-[#00af87] hover:bg-[#009b77] text-white shadow-md flex items-center gap-1.5"
+              className="h-9 rounded-2xl text-xs font-bold bg-[#053a1a] hover:bg-[#009b77] text-white shadow-md flex items-center gap-1.5"
             >
               <Copy className="w-3.5 h-3.5" />
               <span>{cloned ? "Cloning Trip..." : "Copy to My Trips"}</span>
@@ -126,7 +126,7 @@ export default function SharedItineraryPage() {
         <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 rounded-3xl border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="font-black text-sm text-emerald-950 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#00af87]" />
+              <Sparkles className="w-4 h-4 text-[#053a1a]" />
               <span>Love this itinerary?</span>
             </h3>
             <p className="text-xs text-emerald-800 mt-0.5">
@@ -136,7 +136,7 @@ export default function SharedItineraryPage() {
 
           <Button
             onClick={handleCloneTrip}
-            className="bg-[#00af87] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl h-10 px-5 shadow-md flex items-center gap-2 shrink-0"
+            className="bg-[#053a1a] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl h-10 px-5 shadow-md flex items-center gap-2 shrink-0"
           >
             <Copy className="w-4 h-4" />
             <span>{cloned ? "Duplicating into your Planner..." : "Clone Trip Plan (Free)"}</span>
@@ -150,7 +150,7 @@ export default function SharedItineraryPage() {
           {/* Stop 1 */}
           <div className="bg-white rounded-3xl p-6 border border-gray-200/90 shadow-2xs space-y-4">
             <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-              <div className="w-8 h-8 rounded-full bg-[#00af87] text-white font-black text-xs flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[#053a1a] text-white font-black text-xs flex items-center justify-center">
                 1
               </div>
               <div>
@@ -186,7 +186,7 @@ export default function SharedItineraryPage() {
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#00af87] uppercase">Attraction</span>
+                  <span className="text-[10px] font-bold text-[#053a1a] uppercase">Attraction</span>
                   <h4 className="font-bold text-xs text-gray-900 mt-0.5">Uluwatu Sunset Temple & Fire Dance</h4>
                   <p className="text-[11px] text-gray-500">South Kuta Cliffside &bull; $45/ticket</p>
                 </div>
@@ -197,7 +197,7 @@ export default function SharedItineraryPage() {
           {/* Stop 2 */}
           <div className="bg-white rounded-3xl p-6 border border-gray-200/90 shadow-2xs space-y-4">
             <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-              <div className="w-8 h-8 rounded-full bg-[#00af87] text-white font-black text-xs flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[#053a1a] text-white font-black text-xs flex items-center justify-center">
                 2
               </div>
               <div>
@@ -217,7 +217,7 @@ export default function SharedItineraryPage() {
                   />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#00af87] uppercase">Adventure Activity</span>
+                  <span className="text-[10px] font-bold text-[#053a1a] uppercase">Adventure Activity</span>
                   <h4 className="font-bold text-xs text-gray-900 mt-0.5">Nusa Penida Speedboat & Manta Snorkel</h4>
                   <p className="text-[11px] text-gray-500">Sanur Harbor &bull; $110/person</p>
                 </div>

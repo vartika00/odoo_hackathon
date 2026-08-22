@@ -35,7 +35,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
           
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold font-black mb-2">Grand Hotel & Spa</h1>
+              <h1 className="text-3xl md:text-4xl font-bold font-black mb-2" style={{ fontFamily: 'var(--font-acworth)' }}>Grand Hotel & Spa</h1>
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="flex items-center gap-1.5 cursor-pointer hover:underline">
                   <BubbleRating rating={4.5} />
@@ -117,7 +117,7 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
               <div className="w-full h-64 bg-gray-200 rounded-xl relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3')] bg-cover bg-center cursor-pointer">
                 <div className="absolute inset-0 flex items-center justify-center">
                    <div className="p-3 bg-white rounded-full shadow-lg">
-                      <MapPin className="text-brand w-6 h-6" fill="#00AF87" color="white" />
+                      <MapPin className="text-brand w-6 h-6" fill="#053a1a" color="white" />
                    </div>
                 </div>
               </div>

@@ -65,16 +65,16 @@ export default function SignupPage() {
         {/* Brand Card */}
         <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/80 relative overflow-hidden">
           {/* Top Decorative Banner */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-teal-500 via-[#00af87] to-emerald-400" />
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-teal-500 via-[#053a1a] to-emerald-400" />
 
           {/* Logo & Header */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2.5 group mb-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#00af87] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-2xl bg-[#053a1a] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
                 <Compass className="w-6 h-6 animate-spin-slow" />
               </div>
               <span className="font-black text-2xl tracking-tight text-gray-900">
-                Atlas<span className="text-[#00af87]">.</span>
+                Atlas<span className="text-[#053a1a]">.</span>
               </span>
             </Link>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Create Your Account</h1>
@@ -92,7 +92,7 @@ export default function SignupPage() {
           )}
           {successMsg && (
             <div className="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-2xl flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#00af87]" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#053a1a]" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -110,7 +110,7 @@ export default function SignupPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Elena Rostova"
-                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition"
                   required
                 />
               </div>
@@ -127,7 +127,7 @@ export default function SignupPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="elena@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition"
                   required
                 />
               </div>
@@ -142,7 +142,7 @@ export default function SignupPage() {
                 <select
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition cursor-pointer"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition cursor-pointer"
                 >
                   <option value="United States">🇺🇸 United States</option>
                   <option value="India">🇮🇳 India</option>
@@ -167,7 +167,7 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition"
                   required
                 />
                 <button
@@ -187,12 +187,12 @@ export default function SignupPage() {
                 id="terms"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
-                className="w-4 h-4 mt-0.5 accent-[#00af87] rounded cursor-pointer shrink-0"
+                className="w-4 h-4 mt-0.5 accent-[#053a1a] rounded cursor-pointer shrink-0"
               />
               <label htmlFor="terms" className="text-[11px] text-gray-600 leading-snug cursor-pointer">
                 I agree to the{" "}
-                <span className="text-[#00af87] font-bold">Terms of Service</span> and{" "}
-                <span className="text-[#00af87] font-bold">Privacy Policy</span>.
+                <span className="text-[#053a1a] font-bold">Terms of Service</span> and{" "}
+                <span className="text-[#053a1a] font-bold">Privacy Policy</span>.
               </label>
             </div>
 
@@ -200,7 +200,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-[#00af87] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center justify-center gap-2"
+              className="w-full h-11 bg-[#053a1a] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center justify-center gap-2"
             >
               {isLoading ? "Creating Account..." : "Join Atlas & Start Planning"}
               <ArrowRight className="w-4 h-4" />
@@ -211,7 +211,7 @@ export default function SignupPage() {
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-600 font-medium">
               Already have an Atlas account?{" "}
-              <Link href="/login" className="text-[#00af87] font-bold hover:underline">
+              <Link href="/login" className="text-[#053a1a] font-bold hover:underline">
                 Sign in instead
               </Link>
             </p>

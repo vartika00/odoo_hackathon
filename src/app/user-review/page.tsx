@@ -54,7 +54,7 @@ export default function WriteReviewPage() {
                     width="42" 
                     height="42" 
                     viewBox="0 0 24 24" 
-                    fill={(hoverRating || rating) >= star ? "#00AF87" : "none"}
+                    fill={(hoverRating || rating) >= star ? "#053a1a" : "none"}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => setRating(star)}
@@ -62,7 +62,7 @@ export default function WriteReviewPage() {
                   >
                     <circle 
                       cx="12" cy="12" r="10" 
-                      stroke={(hoverRating || rating) >= star ? "#00AF87" : "#E0E0E0"} 
+                      stroke={(hoverRating || rating) >= star ? "#053a1a" : "#E0E0E0"} 
                       strokeWidth="2" 
                     />
                   </svg>

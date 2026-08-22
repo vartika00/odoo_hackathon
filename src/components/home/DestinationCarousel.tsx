@@ -110,7 +110,7 @@ export function DestinationCarousel({ title, subtitle, destinations }: Destinati
         </div>
         <Link
           href={`/listings?query=${encodeURIComponent(title)}`}
-          className="text-xs sm:text-sm font-bold text-[#00af87] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
+          className="text-xs sm:text-sm font-bold text-[#053a1a] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
         >
           <span>See all</span>
           <ChevronRight className="h-4 w-4" />
@@ -169,7 +169,7 @@ export function DestinationCarousel({ title, subtitle, destinations }: Destinati
                         <MapPin className="h-3 w-3" />
                         <span>Destination</span>
                       </div>
-                      <h3 className="text-xl sm:text-2xl font-black leading-tight tracking-tight drop-shadow-xs">
+                      <h3 className="text-xl sm:text-2xl font-bold leading-tight tracking-tight drop-shadow-xs" style={{ fontFamily: 'var(--font-acworth)' }}>
                         {dest.name}
                       </h3>
                       {dest.tagline && (

@@ -97,7 +97,7 @@ export default function MapView({ listings }: { listings: PlaceListing[] }) {
             <div className="relative group -translate-x-1/2 -translate-y-1/2">
               <div 
                 onClick={() => setSelectedSpot(spot)}
-                className="cursor-pointer bg-[#00af87] text-white px-2 py-1 rounded-full font-black text-[11px] shadow-[0_4px_6px_-1px_rgb(0_0_0/0.2)] border-2 border-white whitespace-nowrap hover:scale-110 transition-transform origin-bottom"
+                className="cursor-pointer bg-[#053a1a] text-white px-2 py-1 rounded-full font-black text-[11px] shadow-[0_4px_6px_-1px_rgb(0_0_0/0.2)] border-2 border-white whitespace-nowrap hover:scale-110 transition-transform origin-bottom"
               >
                 ${spot.priceMin}
               </div>
@@ -113,7 +113,7 @@ export default function MapView({ listings }: { listings: PlaceListing[] }) {
                   </button>
                   <div className="font-bold text-gray-900 text-sm mb-1 truncate pr-4">{spot.name}</div>
                   <div className="text-xs text-gray-600 mb-2">★ {spot.rating} ({spot.reviewsCount})</div>
-                  <div className="text-[#00af87] font-black">${spot.priceMin} <span className="text-gray-500 font-normal text-[10px]">/ night</span></div>
+                  <div className="text-[#053a1a] font-black">${spot.priceMin} <span className="text-gray-500 font-normal text-[10px]">/ night</span></div>
                 </div>
               )}
             </div>

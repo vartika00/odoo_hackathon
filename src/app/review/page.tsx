@@ -52,7 +52,7 @@ export default function WriteReviewPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         {/* Page Header */}
         <div className="text-center space-y-2 mb-8">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#00af87] text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#053a1a] text-xs font-bold uppercase tracking-wider">
             <PenLine className="h-3.5 w-3.5" />
             <span>Community Contributions</span>
           </div>
@@ -67,7 +67,7 @@ export default function WriteReviewPage() {
         {isSubmitted ? (
           /* Submission Success Card */
           <div className="bg-white rounded-3xl border border-gray-200 p-8 sm:p-12 text-center space-y-4 shadow-lg animate-in zoom-in-95 duration-200">
-            <div className="h-16 w-16 rounded-full bg-emerald-100 text-[#00af87] mx-auto flex items-center justify-center shadow-inner">
+            <div className="h-16 w-16 rounded-full bg-emerald-100 text-[#053a1a] mx-auto flex items-center justify-center shadow-inner">
               <CheckCircle2 className="h-10 w-10" />
             </div>
             <h2 className="text-2xl font-black text-gray-900">Thank you for your review!</h2>
@@ -76,7 +76,7 @@ export default function WriteReviewPage() {
             </p>
             <div className="pt-4 flex justify-center gap-3">
               <Link href="/listings">
-                <Button className="rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-bold text-xs px-6">
+                <Button className="rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white font-bold text-xs px-6">
                   Explore More Places
                 </Button>
               </Link>
@@ -104,7 +104,7 @@ export default function WriteReviewPage() {
                 </label>
                 <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-white text-[#00af87] shadow-2xs">
+                    <div className="p-2 rounded-xl bg-white text-[#053a1a] shadow-2xs">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div>
@@ -112,7 +112,7 @@ export default function WriteReviewPage() {
                       <span className="text-[11px] text-gray-500">Nusa Dua, Bali, Indonesia</span>
                     </div>
                   </div>
-                  <span className="text-xs text-[#00af87] font-bold cursor-pointer hover:underline">
+                  <span className="text-xs text-[#053a1a] font-bold cursor-pointer hover:underline">
                     Change
                   </span>
                 </div>
@@ -136,7 +136,7 @@ export default function WriteReviewPage() {
                       <div
                         className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 transition-all flex items-center justify-center ${
                           bubble <= activeRatingDisplay
-                            ? "bg-[#00af87] border-[#00af87] shadow-sm"
+                            ? "bg-[#053a1a] border-[#053a1a] shadow-sm"
                             : "bg-white border-gray-300 hover:border-gray-400"
                         }`}
                       >
@@ -186,7 +186,7 @@ export default function WriteReviewPage() {
                   type="month"
                   value={dateOfVisit}
                   onChange={(e) => setDateOfVisit(e.target.value)}
-                  className="p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-semibold text-gray-800 outline-none focus:border-[#00af87]"
+                  className="p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-semibold text-gray-800 outline-none focus:border-[#053a1a]"
                 />
               </div>
 
@@ -202,7 +202,7 @@ export default function WriteReviewPage() {
                     value={reviewTitle}
                     onChange={(e) => setReviewTitle(e.target.value)}
                     placeholder="Summarize your visit in one key headline..."
-                    className="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium outline-none focus:border-[#00af87]"
+                    className="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium outline-none focus:border-[#053a1a]"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function WriteReviewPage() {
                     value={reviewBody}
                     onChange={(e) => setReviewBody(e.target.value)}
                     placeholder="Tell other travelers about your stay: room quality, service, dining, location highlights, and insider tips..."
-                    className="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium outline-none focus:border-[#00af87] resize-none"
+                    className="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium outline-none focus:border-[#053a1a] resize-none"
                   />
                   <div className="text-right text-[11px] text-gray-400 mt-1">
                     {reviewBody.length} characters (minimum 50 recommended)
@@ -229,7 +229,7 @@ export default function WriteReviewPage() {
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block mb-2">
                   7. Add photos (optional)
                 </label>
-                <div className="border-2 border-dashed border-gray-300 hover:border-[#00af87] rounded-2xl p-6 text-center cursor-pointer transition-colors bg-gray-50/50">
+                <div className="border-2 border-dashed border-gray-300 hover:border-[#053a1a] rounded-2xl p-6 text-center cursor-pointer transition-colors bg-gray-50/50">
                   <UploadCloud className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs font-bold text-gray-700">Click to upload traveler photos</p>
                   <p className="text-[11px] text-gray-400 mt-0.5">PNG, JPG, HEIC up to 10MB each</p>
@@ -242,7 +242,7 @@ export default function WriteReviewPage() {
                   type="checkbox"
                   required
                   defaultChecked
-                  className="rounded text-[#00af87] accent-[#00af87] mt-0.5"
+                  className="rounded text-[#053a1a] accent-[#053a1a] mt-0.5"
                 />
                 <span>
                   I certify that this review is based on my own genuine experience and that I have no personal or commercial relationship with this establishment.
@@ -252,7 +252,7 @@ export default function WriteReviewPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-extrabold text-sm sm:text-base h-12 shadow-md transition-transform active:scale-98"
+                className="w-full rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold text-sm sm:text-base h-12 shadow-md transition-transform active:scale-98"
               >
                 Submit Review
               </Button>
@@ -261,22 +261,22 @@ export default function WriteReviewPage() {
             {/* Sidebar Guidelines */}
             <aside className="lg:col-span-4 space-y-4">
               <div className="bg-white rounded-3xl border border-gray-200 p-6 space-y-4 shadow-xs">
-                <div className="flex items-center gap-2 text-[#00af87] font-bold text-sm">
+                <div className="flex items-center gap-2 text-[#053a1a] font-bold text-sm">
                   <ShieldCheck className="h-5 w-5" />
                   <span>Review Guidelines</span>
                 </div>
 
                 <ul className="space-y-3 text-xs text-gray-600">
                   <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#00af87] shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-[#053a1a] shrink-0 mt-0.5" />
                     <span><strong>Be specific and factual:</strong> Share details about cleanliness, staff, and food.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#00af87] shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-[#053a1a] shrink-0 mt-0.5" />
                     <span><strong>Keep it helpful:</strong> What tips would you give a friend traveling there?</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-[#00af87] shrink-0 mt-0.5" />
+                    <Check className="h-4 w-4 text-[#053a1a] shrink-0 mt-0.5" />
                     <span><strong>Family-friendly language:</strong> No hate speech, profanity, or commercial promotions.</span>
                   </li>
                 </ul>
@@ -284,7 +284,7 @@ export default function WriteReviewPage() {
 
               <div className="bg-emerald-50/70 border border-emerald-200 rounded-3xl p-6 text-xs text-emerald-950 space-y-2">
                 <span className="font-bold text-sm flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-[#00af87]" /> Travelers' Community
+                  <Sparkles className="h-4 w-4 text-[#053a1a]" /> Travelers' Community
                 </span>
                 <p className="leading-relaxed">
                   Your review joins over 1 billion trusted traveler contributions worldwide, empowering honest travel discovery.

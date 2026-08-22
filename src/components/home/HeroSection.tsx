@@ -4,6 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Righteous } from "next/font/google";
+
+const displayFont = Righteous({
+  weight: "400",
+  subsets: ["latin"],
+});
+
 import {
   Search,
   Bed,
@@ -71,7 +78,7 @@ export function HeroSection() {
       className="relative w-full overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[700px] flex items-center justify-center bg-background text-gray-900"
     >
       {/* Background Static Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <Image
           src={STATIC_HERO.image}
           alt={STATIC_HERO.title}
@@ -80,7 +87,7 @@ export function HeroSection() {
           unoptimized={true}
           priority={true}
           sizes="100vw"
-          className="object-cover object-center opacity-90"
+          className="object-cover object-center opacity-90 blur-[3px] scale-105"
         />
         
         {/* Top Fade out gradient to blend with header */}
@@ -95,7 +102,7 @@ export function HeroSection() {
         
         {/* Static Slide Headline */}
         <div className="space-y-3 max-w-3xl">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-gray-900 leading-[1.06]">
+          <h1 className={`text-5xl sm:text-7xl md:text-8xl tracking-wide uppercase text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.7)] leading-[1.05] ${displayFont.className}`}>
             {STATIC_HERO.title}
           </h1>
 
@@ -116,7 +123,7 @@ export function HeroSection() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer select-none shrink-0 backdrop-blur-md shadow-md ${
                     isActive
-                      ? "bg-[#00af87] text-white border border-[#00eb5b]/50 shadow-lg scale-102 ring-2 ring-[#00eb5b]/30"
+                      ? "bg-[#053a1a] text-white border border-[#00eb5b]/50 shadow-lg scale-102 ring-2 ring-[#00eb5b]/30"
                       : "bg-black/60 text-gray-200 hover:bg-black/80 hover:text-white border border-white/15"
                   }`}
                 >
@@ -135,7 +142,7 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
               {/* Primary Location Input */}
               <div className="flex-1 flex items-center px-4 py-3 sm:py-2">
-                <Search className="h-5 w-5 text-[#00af87] mr-3 shrink-0" />
+                <Search className="h-5 w-5 text-[#053a1a] mr-3 shrink-0" />
                 <div className="w-full text-left">
                   <label className="block text-[10px] font-bold uppercase text-gray-500 sm:hidden">
                     Destination or Keyword
@@ -166,7 +173,7 @@ export function HeroSection() {
               {(activeTab === "hotels" || activeTab === "holiday-homes") && (
                 <>
                   <div className="flex items-center px-4 py-2 sm:py-1 cursor-pointer hover:bg-gray-50 sm:rounded-lg">
-                    <Calendar className="h-4 w-4 text-[#00af87] mr-2 shrink-0" />
+                    <Calendar className="h-4 w-4 text-[#053a1a] mr-2 shrink-0" />
                     <div className="text-left">
                       <div className="text-[10px] font-bold text-gray-400 uppercase">Dates</div>
                       <div className="text-xs sm:text-sm font-semibold text-gray-800 whitespace-nowrap">{dates}</div>
@@ -174,7 +181,7 @@ export function HeroSection() {
                   </div>
 
                   <div className="flex items-center px-4 py-2 sm:py-1 cursor-pointer hover:bg-gray-50 sm:rounded-lg">
-                    <Users className="h-4 w-4 text-[#00af87] mr-2 shrink-0" />
+                    <Users className="h-4 w-4 text-[#053a1a] mr-2 shrink-0" />
                     <div className="text-left">
                       <div className="text-[10px] font-bold text-gray-400 uppercase">Guests</div>
                       <div className="text-xs sm:text-sm font-semibold text-gray-800 whitespace-nowrap">{guests}</div>
@@ -187,7 +194,7 @@ export function HeroSection() {
               <div className="pt-2 sm:pt-0 sm:pl-2">
                 <Button
                   type="submit"
-                  className="w-full sm:w-auto rounded-xl sm:rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-extrabold h-11 sm:h-12 px-8 text-sm sm:text-base shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto rounded-xl sm:rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold h-11 sm:h-12 px-8 text-sm sm:text-base shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
                 >
                   <span>Search</span>
                   <ArrowRight className="h-4 w-4" />

@@ -10,7 +10,7 @@ export function TravelersChoiceBanner() {
     <section className="w-full py-8 sm:py-12 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#002b11] via-[#00471b] to-[#001f0c] text-white p-6 sm:p-10 lg:p-14 shadow-xl">
         {/* Background decorative elements */}
-        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-[#00af87]/20 blur-3xl pointer-events-none" />
+        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-[#053a1a]/20 blur-3xl pointer-events-none" />
         <div className="absolute left-1/3 -bottom-16 w-60 h-60 rounded-full bg-[#00eb5b]/15 blur-2xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">

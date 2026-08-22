@@ -64,7 +64,7 @@ export function MapNavigator() {
     <section className="relative w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-2">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#00af87] uppercase tracking-wider mb-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#053a1a] uppercase tracking-wider mb-1">
             <Compass className="h-4 w-4" />
             <span>Curated Worldwide Itineraries</span>
           </div>
@@ -78,7 +78,7 @@ export function MapNavigator() {
 
         <Link
           href="/trips"
-          className="text-xs sm:text-sm font-bold text-[#00af87] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
+          className="text-xs sm:text-sm font-bold text-[#053a1a] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
         >
           <span>Open Trip Planner</span>
           &rarr;
@@ -89,7 +89,7 @@ export function MapNavigator() {
       <div className="relative bg-gradient-to-br from-[#002b11] via-[#033a18] to-[#011c0b] text-white rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/40 p-6 sm:p-10">
         {/* Background Ambient Glow */}
         <div className="absolute -right-16 -top-16 w-96 h-96 rounded-full bg-[#00eb5b]/10 blur-3xl pointer-events-none" />
-        <div className="absolute left-1/4 -bottom-20 w-80 h-80 rounded-full bg-[#00af87]/15 blur-3xl pointer-events-none" />
+        <div className="absolute left-1/4 -bottom-20 w-80 h-80 rounded-full bg-[#053a1a]/15 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-8">
           {/* Continent Filter Tabs */}
@@ -100,7 +100,7 @@ export function MapNavigator() {
                 onClick={() => setSelectedContinent(exp.continent)}
                 className={`px-5 py-2 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   selectedContinent === exp.continent
-                    ? "bg-[#00af87] text-white shadow-lg ring-2 ring-[#00eb5b]/40 scale-102"
+                    ? "bg-[#053a1a] text-white shadow-lg ring-2 ring-[#00eb5b]/40 scale-102"
                     : "bg-white/10 hover:bg-white/20 text-amber-100 border border-white/10"
                 }`}
               >
@@ -150,7 +150,7 @@ export function MapNavigator() {
               {/* Rating & CTA */}
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex text-[#00af87] gap-0.5">
+                  <div className="flex text-[#053a1a] gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="h-3 w-3 rounded-full bg-[#00eb5b] inline-block" />
                     ))}
@@ -160,7 +160,7 @@ export function MapNavigator() {
                 </div>
 
                 <Link href={`/listings?query=${encodeURIComponent(currentExpedition.query)}`}>
-                  <Button className="w-full sm:w-auto rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-extrabold px-6 h-11 text-xs sm:text-sm shadow-lg gap-2">
+                  <Button className="w-full sm:w-auto rounded-full bg-[#053a1a] hover:bg-[#032b13] text-white font-extrabold px-6 h-11 text-xs sm:text-sm shadow-lg gap-2">
                     <span>View Itinerary Stays & Tours</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>

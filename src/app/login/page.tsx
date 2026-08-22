@@ -77,16 +77,16 @@ export default function LoginPage() {
         {/* Brand Card */}
         <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/80 relative overflow-hidden">
           {/* Top Decorative Banner */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#00af87] via-emerald-400 to-teal-500" />
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#053a1a] via-emerald-400 to-teal-500" />
 
           {/* Logo & Header */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2.5 group mb-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#00af87] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-2xl bg-[#053a1a] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
                 <Compass className="w-6 h-6 animate-spin-slow" />
               </div>
               <span className="font-black text-2xl tracking-tight text-gray-900">
-                Atlas<span className="text-[#00af87]">.</span>
+                Atlas<span className="text-[#053a1a]">.</span>
               </span>
             </Link>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Welcome Back</h1>
@@ -104,7 +104,7 @@ export default function LoginPage() {
           )}
           {successMsg && (
             <div className="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-2xl flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#00af87]" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#053a1a]" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -114,7 +114,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleDemoLogin}
-              className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-[#00af87] rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 group"
+              className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-[#053a1a] rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 group"
             >
               <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
               <span>1-Click Demo Traveler Login</span>
@@ -141,7 +141,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="traveler@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition"
                   required
                 />
               </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
                     setForgotSent(false);
                     setForgotEmail(email);
                   }}
-                  className="text-[11px] font-bold text-[#00af87] hover:underline"
+                  className="text-[11px] font-bold text-[#053a1a] hover:underline"
                 >
                   Forgot password?
                 </button>
@@ -171,7 +171,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] focus:bg-white transition"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs bg-gray-50/80 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a] focus:bg-white transition"
                   required
                 />
                 <button
@@ -191,7 +191,7 @@ export default function LoginPage() {
                 id="remember"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 accent-[#00af87] rounded cursor-pointer"
+                className="w-4 h-4 accent-[#053a1a] rounded cursor-pointer"
               />
               <label htmlFor="remember" className="text-xs text-gray-600 font-medium cursor-pointer">
                 Keep me signed in on this device
@@ -202,7 +202,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-[#00af87] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center justify-center gap-2"
+              className="w-full h-11 bg-[#053a1a] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center justify-center gap-2"
             >
               {isLoading ? "Signing in..." : "Sign In to Atlas"}
               <ArrowRight className="w-4 h-4" />
@@ -213,7 +213,7 @@ export default function LoginPage() {
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-600 font-medium">
               Don't have an account yet?{" "}
-              <Link href="/signup" className="text-[#00af87] font-bold hover:underline">
+              <Link href="/signup" className="text-[#053a1a] font-bold hover:underline">
                 Create an account
               </Link>
             </p>
@@ -237,7 +237,7 @@ export default function LoginPage() {
               <X className="w-4 h-4" />
             </button>
 
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00af87] flex items-center justify-center mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#053a1a] flex items-center justify-center mb-4">
               <Lock className="w-5 h-5" />
             </div>
 
@@ -248,14 +248,14 @@ export default function LoginPage() {
 
             {forgotSent ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
-                <CheckCircle2 className="w-6 h-6 text-[#00af87] mx-auto mb-2" />
+                <CheckCircle2 className="w-6 h-6 text-[#053a1a] mx-auto mb-2" />
                 <h4 className="text-xs font-bold text-emerald-900">Reset Link Dispatched!</h4>
                 <p className="text-[11px] text-emerald-700 mt-1">
                   We sent recovery instructions to <strong>{forgotEmail}</strong>.
                 </p>
                 <Button
                   onClick={() => setIsForgotOpen(false)}
-                  className="mt-4 w-full h-9 bg-[#00af87] text-white text-xs font-bold rounded-xl"
+                  className="mt-4 w-full h-9 bg-[#053a1a] text-white text-xs font-bold rounded-xl"
                 >
                   Back to Sign In
                 </Button>
@@ -272,12 +272,12 @@ export default function LoginPage() {
                     onChange={(e) => setForgotEmail(e.target.value)}
                     placeholder="traveler@example.com"
                     required
-                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#053a1a]"
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-10 bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-2xl"
+                  className="w-full h-10 bg-[#053a1a] hover:bg-[#009b77] text-white text-xs font-bold rounded-2xl"
                 >
                   Send Recovery Link
                 </Button>

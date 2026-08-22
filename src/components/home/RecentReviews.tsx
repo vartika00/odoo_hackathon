@@ -80,7 +80,7 @@ export function RecentReviews() {
         </div>
         <Link
           href="/review"
-          className="text-xs sm:text-sm font-bold text-[#00af87] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
+          className="text-xs sm:text-sm font-bold text-[#053a1a] hover:underline inline-flex items-center gap-1 self-start sm:self-auto"
         >
           <span>Write a Review</span>
           &rarr;
@@ -111,12 +111,12 @@ export function RecentReviews() {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <h4 className="font-bold text-sm text-gray-900">{rev.author}</h4>
-                      <CheckCircle2 className="h-3.5 w-3.5 text-[#00af87]" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-[#053a1a]" />
                     </div>
                     <div className="text-[11px] text-gray-500 flex items-center gap-1">
                       <span>{rev.location}</span>
                       <span>•</span>
-                      <span className="text-[#00af87] font-semibold">{rev.badge}</span>
+                      <span className="text-[#053a1a] font-semibold">{rev.badge}</span>
                     </div>
                   </div>
                 </div>
@@ -131,9 +131,9 @@ export function RecentReviews() {
                       {rev.place}
                     </span>
                   </div>
-                  <div className="flex text-[#00af87] gap-0.5 shrink-0">
+                  <div className="flex text-[#053a1a] gap-0.5 shrink-0">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="h-2 w-2 rounded-full bg-[#00af87] inline-block" />
+                      <span key={i} className="h-2 w-2 rounded-full bg-[#053a1a] inline-block" />
                     ))}
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export function RecentReviews() {
                   onClick={() => handleHelpful(rev.id, rev.helpfulVotes)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
                     isLiked
-                      ? "bg-emerald-50 text-[#00af87] border border-[#00af87]/30"
+                      ? "bg-emerald-50 text-[#053a1a] border border-[#053a1a]/30"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
