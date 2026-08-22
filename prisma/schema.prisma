@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  reviews       Review[]
+  trips         Trip[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+  type        String   // HOTEL, RESTAURANT, ATTRACTION
+  name        String
+  description String?  @db.Text
+  lat         Float
+  lng         Float
+  priceMin    Float?
+  priceMax    Float?
+  starRating  Float?
+  images      String[]
+  amenities   String[]
+  reviews     Review[]
+  tripItems   TripItem[]
+  otaPrices   OTAPrice[]
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  userId       String
+  listingId    String
+  rating       Int      // 1-5
+  title        String
+  body         String   @db.Text
+  tripType     String?  // Solo, Couples, Business
+  photos       String[]
+  helpfulVotes Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Trip {
+  id        String     @id @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime   @default(now())
+  
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     TripItem[]
+}
+
+model TripItem {
+  id        String  @id @default(cuid())
+  tripId    String
+  listingId String
+  dayIndex  Int     @default(0)
+  position  Int
+  notes     String? @db.Text
+
+  trip    Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model OTAPrice {
+  id        String  @id @default(cuid())
+  listingId String
+  provider  String  // e.g. Booking.com, Expedia
+  price     Float
+  currency  String  @default("INR")
+  url       String
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
