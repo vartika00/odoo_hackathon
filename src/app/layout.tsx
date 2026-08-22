@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tripadvisor: Over a billion reviews & contributions for Hotels, Flights, Restaurants",
-  description: "Plan your next trip, read authentic traveler reviews, compare hotel prices across 200+ booking sites, and discover the best things to do.",
+  title: "Atlas: Real Travel Insights, Hotels, Flights & Restaurants",
+  description: "Discover real travel insights, hotels, flights, and restaurants.",
 };
 
 export const viewport: Viewport = {

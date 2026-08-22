@@ -85,18 +85,11 @@ export function MapNavigator() {
         </Link>
       </div>
 
-      {/* Main Container Card with subtle vintage map backing */}
-      <div className="relative bg-[#22140a] text-white rounded-3xl overflow-hidden shadow-2xl border border-amber-900/40 p-6 sm:p-10">
-        {/* Background Map Graphic Overlay */}
-        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-          <Image
-            src="/vintage-map-bg.jpg"
-            alt="World Map Texture"
-            fill
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#22140a] via-[#22140a]/80 to-transparent" />
-        </div>
+      {/* Main Container Card */}
+      <div className="relative bg-gradient-to-br from-[#002b11] via-[#033a18] to-[#011c0b] text-white rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/40 p-6 sm:p-10">
+        {/* Background Ambient Glow */}
+        <div className="absolute -right-16 -top-16 w-96 h-96 rounded-full bg-[#00eb5b]/10 blur-3xl pointer-events-none" />
+        <div className="absolute left-1/4 -bottom-20 w-80 h-80 rounded-full bg-[#00af87]/15 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-8">
           {/* Continent Filter Tabs */}
