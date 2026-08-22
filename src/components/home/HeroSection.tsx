@@ -68,10 +68,10 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative w-full overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[700px] flex items-center justify-center bg-background text-white"
+      className="relative w-full overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[700px] flex items-center justify-center bg-background text-gray-900"
     >
       {/* Background Static Image */}
-      <div className="absolute inset-0 z-0 mask-image-b-fade">
+      <div className="absolute inset-0 z-0">
         <Image
           src={STATIC_HERO.image}
           alt={STATIC_HERO.title}
@@ -80,13 +80,13 @@ export function HeroSection() {
           unoptimized={true}
           priority={true}
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-center opacity-90"
         />
-        {/* Light Overlay for Image Vibrancy + Text Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/50" />
-        <div className="absolute inset-0 [background:radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.4)_100%)]" />
         
-        {/* Bottom Fade out gradient to match the new cream background */}
+        {/* Top Fade out gradient to blend with header */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent pointer-events-none" />
+
+        {/* Bottom Fade out gradient to blend with content */}
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </div>
 
@@ -95,11 +95,11 @@ export function HeroSection() {
         
         {/* Static Slide Headline */}
         <div className="space-y-3 max-w-3xl">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] leading-[1.06]">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-gray-900 leading-[1.06]">
             {STATIC_HERO.title}
           </h1>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-100 font-medium max-w-2xl mx-auto drop-shadow-md leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-gray-800 font-bold max-w-2xl mx-auto leading-relaxed">
             {STATIC_HERO.subtitle}
           </p>
         </div>

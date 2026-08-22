@@ -69,12 +69,12 @@ export function Footer() {
       ],
     },
     {
-      title: "About Tripadvisor",
+      title: "About Atlas",
       links: [
-        { label: "About Us & History", href: "#" },
-        { label: "Press & Media Center", href: "#" },
-        { label: "Trust & Safety Guidelines", href: "#" },
-        { label: "Careers at Tripadvisor", href: "#" },
+        { label: "About Us", href: "#" },
+        { label: "Press", href: "#" },
+        { label: "Resources and Policies", href: "#" },
+        { label: "Careers at Atlas", href: "#" },
         { label: "Investor Relations", href: "#" },
         { label: "Contact Customer Support", href: "#" },
         { label: "Accessibility Statement", href: "#" },
@@ -194,10 +194,10 @@ export function Footer() {
           ))}
         </div>
 
-        {/* 3. Tripadvisor Family Sites Directory */}
+        {/* 3. Atlas Family Sites Directory */}
         <div className="mt-12 pt-8 border-t border-gray-300">
           <h4 className="font-bold text-xs uppercase tracking-wider text-gray-500 mb-4">
-            Tripadvisor Sites & Partner Brands
+            Atlas Sites & Partner Brands
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tripadvisorSites.map((site) => (
@@ -283,15 +283,10 @@ export function Footer() {
         {/* 5. Bottom Legal / Copyright Section */}
         <div className="mt-12 pt-8 border-t border-gray-300 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
           <div className="flex items-center gap-3">
-            <div className="bg-[#00af87] text-white rounded-full p-1.5 flex items-center justify-center h-8 w-8 shrink-0">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                <line x1="9" y1="9" x2="9.01" y2="9" />
-                <line x1="15" y1="9" x2="15.01" y2="9" />
-              </svg>
+            <div className="flex items-center justify-center h-8 w-8 shrink-0 mix-blend-multiply rounded-full overflow-hidden">
+              <img src="/images/atlas-logo.png" alt="Atlas" className="object-cover scale-[1.3] w-full h-full" />
             </div>
-            <span>© 2026 Tripadvisor LLC All rights reserved. TripAdvisor Clone Platform.</span>
+            <span>© 2026 Atlas Travel LLC. All rights reserved.</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
