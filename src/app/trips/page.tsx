@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/navigation";
+import NextLink from "next/link";
 import {
   Plus,
   Heart,
@@ -22,733 +23,1558 @@ import {
   Layers,
   ArrowRight,
   Edit3,
-  Bookmark
+  Bookmark,
+  DollarSign,
+  PieChart as PieChartIcon,
+  SlidersHorizontal,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  ExternalLink,
+  Copy,
+  Check,
+  AlertTriangle,
+  ArrowUpDown,
+  Utensils,
+  Camera,
+  Compass,
+  Building,
+  Plane,
+  Eye,
+  ListTodo
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface ItineraryItem {
+// --- TYPES ---
+export interface ActivityItem {
   id: string;
   name: string;
-  category: "Hotel" | "Attraction" | "Restaurant" | "Activity";
+  category: "Hotel" | "Attraction" | "Restaurant" | "Activity" | "Transport";
   location: string;
   image: string;
   time: string;
   notes: string;
-  day: number; // 0 = Saved Pool, 1 = Day 1, 2 = Day 2, 3 = Day 3, 4 = Day 4
+  cost: number;
+  durationMin: number;
   lat: number;
   lng: number;
-  durationMin: number;
 }
 
-const INITIAL_ITEMS: ItineraryItem[] = [
+export interface CityStop {
+  id: string;
+  cityName: string;
+  country: string;
+  coverImage: string;
+  dates: string;
+  daysCount: number;
+  expenseTier: "$" | "$$" | "$$$";
+  popularityScore: number; // e.g. 98%
+  activities: ActivityItem[];
+}
+
+export interface Trip {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  coverImage: string;
+  targetBudget: number;
+  stops: CityStop[];
+}
+
+// --- CURATED CITIES DATABASE FOR SEARCH ---
+const GLOBAL_CITIES_SEARCH = [
   {
-    id: "item-1",
-    name: "The St. Regis Bali Resort",
-    category: "Hotel",
-    location: "Nusa Dua, Bali",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "02:00 PM",
-    notes: "Lagoon villa check-in & welcome coconut drink",
-    day: 1,
-    lat: -8.805,
-    lng: 115.228,
-    durationMin: 90,
-  },
-  {
-    id: "item-2",
-    name: "Uluwatu Sunset Temple & Kecak Dance",
-    category: "Attraction",
-    location: "South Kuta, Bali",
+    id: "c-bali",
+    name: "Bali",
+    country: "Indonesia",
+    expenseTier: "$" as const,
+    popularityScore: 98,
     image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "05:30 PM",
-    notes: "Sunset cliffside amphitheater tickets reserved",
-    day: 1,
-    lat: -8.829,
-    lng: 115.084,
-    durationMin: 120,
+    highlight: "Tropical beaches, Nusa Penida manta diving & volcanic temples"
   },
   {
-    id: "item-3",
-    name: "Nusa Penida Speedboat & Manta Snorkel",
-    category: "Activity",
-    location: "Sanur Port, Bali",
-    image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "07:30 AM",
-    notes: "Meet captain at Harbor Gate 4. Bring waterproof bag.",
-    day: 2,
-    lat: -8.728,
-    lng: 115.544,
-    durationMin: 360,
+    id: "c-paris",
+    name: "Paris",
+    country: "France",
+    expenseTier: "$$$" as const,
+    popularityScore: 99,
+    image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    highlight: "Eiffel Tower, Louvre Museum & Michelin dining"
   },
   {
-    id: "item-4",
-    name: "Kayuputi Beachfront Fine Dining",
-    category: "Restaurant",
-    location: "Nusa Dua, Bali",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "08:00 PM",
-    notes: "Degustation menu with oceanfront table booked",
-    day: 2,
-    lat: -8.806,
-    lng: 115.229,
-    durationMin: 120,
+    id: "c-rome",
+    name: "Rome",
+    country: "Italy",
+    expenseTier: "$$" as const,
+    popularityScore: 97,
+    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    highlight: "Colosseum, Vatican City & authentic Trastevere trattorias"
   },
   {
-    id: "item-5",
-    name: "Tegallalang Rice Terrace & Jungle Swing",
-    category: "Attraction",
-    location: "Ubud, Bali",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "09:00 AM",
-    notes: "Early morning hike before tourist crowds",
-    day: 3,
-    lat: -8.433,
-    lng: 115.279,
-    durationMin: 150,
+    id: "c-tokyo",
+    name: "Tokyo",
+    country: "Japan",
+    expenseTier: "$$" as const,
+    popularityScore: 98,
+    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    highlight: "Shibuya crossing, Tsukiji sushi & Mount Fuji day trips"
   },
   {
-    id: "item-6",
-    name: "Locavore NXT Culinary Lab",
-    category: "Restaurant",
-    location: "Ubud, Bali",
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "01:00 PM",
-    notes: "Hyper-local Indonesian botanical tasting menu",
-    day: 3,
-    lat: -8.507,
-    lng: 115.263,
-    durationMin: 120,
-  },
-  // Saved Unassigned Spots
-  {
-    id: "item-7",
-    name: "Tirta Empul Holy Water Temple",
-    category: "Attraction",
-    location: "Manukaya, Bali",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "10:00 AM",
-    notes: "Traditional spiritual cleansing ceremony",
-    day: 0,
-    lat: -8.415,
-    lng: 115.315,
-    durationMin: 90,
+    id: "c-goa",
+    name: "Goa",
+    country: "India",
+    expenseTier: "$" as const,
+    popularityScore: 94,
+    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    highlight: "Sun-kissed beaches, Portuguese villas & seafood shacks"
   },
   {
-    id: "item-8",
-    name: "Potato Head Beach Club & Sunset Bar",
-    category: "Restaurant",
-    location: "Seminyak, Bali",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-    time: "04:30 PM",
-    notes: "Infinity pool daybed reservation",
-    day: 0,
-    lat: -8.686,
-    lng: 115.152,
-    durationMin: 180,
+    id: "c-swiss",
+    name: "Interlaken",
+    country: "Switzerland",
+    expenseTier: "$$$" as const,
+    popularityScore: 96,
+    image: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    highlight: "Jungfraujoch Top of Europe, alpine skiing & glacial lakes"
   },
 ];
 
+// --- CURATED ACTIVITIES DATABASE FOR SEARCH ---
+const GLOBAL_ACTIVITIES_SEARCH = [
+  {
+    id: "act-1",
+    name: "Private Sunset Catamaran & Snorkeling",
+    category: "Activity" as const,
+    location: "Coastline Harbor",
+    cost: 140,
+    durationMin: 240,
+    image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Adventure"
+  },
+  {
+    id: "act-2",
+    name: "5-Star Luxury Ocean Villa Check-in",
+    category: "Hotel" as const,
+    location: "Exclusive Coastal Bay",
+    cost: 450,
+    durationMin: 120,
+    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Stay"
+  },
+  {
+    id: "act-3",
+    name: "Guided Michelin Tasting Menu Experience",
+    category: "Restaurant" as const,
+    location: "Historic Old Quarter",
+    cost: 180,
+    durationMin: 150,
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Food"
+  },
+  {
+    id: "act-4",
+    name: "VIP Skip-The-Line Historic Monument Tour",
+    category: "Attraction" as const,
+    location: "City Landmark Center",
+    cost: 65,
+    durationMin: 180,
+    image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Sightseeing"
+  },
+  {
+    id: "act-5",
+    name: "First-Class Scenic High-Speed Rail Transfer",
+    category: "Transport" as const,
+    location: "Central Station",
+    cost: 95,
+    durationMin: 190,
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Transport"
+  },
+  {
+    id: "act-6",
+    name: "Sunrise Hot Air Balloon Flight & Champagne",
+    category: "Activity" as const,
+    location: "Valley Launch Field",
+    cost: 260,
+    durationMin: 180,
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    type: "Adventure"
+  },
+];
+
+// --- INITIAL TRIPS DATA ---
+const INITIAL_TRIPS: Trip[] = [
+  {
+    id: "trip-bali-2026",
+    name: "Bali & Nusa Penida Island Expedition",
+    description: "Cliffside ocean villas, manta ray snorkeling, Kecak temple dances & Michelin dining in Ubud.",
+    startDate: "2026-09-10",
+    endDate: "2026-09-18",
+    coverImage: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    targetBudget: 3200,
+    stops: [
+      {
+        id: "stop-nusa-dua",
+        cityName: "Nusa Dua & Uluwatu",
+        country: "Indonesia",
+        coverImage: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+        dates: "Sep 10 - Sep 13 (3 Days)",
+        daysCount: 3,
+        expenseTier: "$$",
+        popularityScore: 98,
+        activities: [
+          {
+            id: "a-1",
+            name: "The St. Regis Bali Resort",
+            category: "Hotel",
+            location: "Nusa Dua Coastal Lagoon",
+            image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "02:00 PM",
+            notes: "Oceanfront villa check-in & welcome drink",
+            cost: 590,
+            durationMin: 90,
+            lat: -8.805,
+            lng: 115.228
+          },
+          {
+            id: "a-2",
+            name: "Uluwatu Sunset Temple & Fire Dance",
+            category: "Attraction",
+            location: "South Kuta Cliffside",
+            image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "05:30 PM",
+            notes: "Cliffside amphitheater reserved seating",
+            cost: 45,
+            durationMin: 120,
+            lat: -8.829,
+            lng: 115.084
+          }
+        ]
+      },
+      {
+        id: "stop-nusa-penida",
+        cityName: "Nusa Penida & Sanur",
+        country: "Indonesia",
+        coverImage: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+        dates: "Sep 14 - Sep 18 (4 Days)",
+        daysCount: 4,
+        expenseTier: "$",
+        popularityScore: 95,
+        activities: [
+          {
+            id: "a-3",
+            name: "Nusa Penida Speedboat & Manta Snorkel",
+            category: "Activity",
+            location: "Sanur Harbor Gate 4",
+            image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "07:30 AM",
+            notes: "Bring waterproof bag & underwater camera",
+            cost: 110,
+            durationMin: 360,
+            lat: -8.728,
+            lng: 115.544
+          },
+          {
+            id: "a-4",
+            name: "Kayuputi Beachfront Degustation Dinner",
+            category: "Restaurant",
+            location: "Beachfront Boardwalk",
+            image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "08:00 PM",
+            notes: "Wine pairing table reserved",
+            cost: 180,
+            durationMin: 120,
+            lat: -8.806,
+            lng: 115.229
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "trip-europe-2026",
+    name: "European Grand Journey: Paris & Swiss Alps",
+    description: "High-speed rail from the Eiffel Tower to Europe's highest mountain peak.",
+    startDate: "2026-10-05",
+    endDate: "2026-10-15",
+    coverImage: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    targetBudget: 4500,
+    stops: [
+      {
+        id: "stop-paris",
+        cityName: "Paris",
+        country: "France",
+        coverImage: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+        dates: "Oct 05 - Oct 09 (4 Days)",
+        daysCount: 4,
+        expenseTier: "$$$",
+        popularityScore: 99,
+        activities: [
+          {
+            id: "ae-1",
+            name: "Shangri-La Palace Stay",
+            category: "Hotel",
+            location: "10 Avenue d'Iéna",
+            image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "03:00 PM",
+            notes: "Eiffel tower terrace view",
+            cost: 1150,
+            durationMin: 120,
+            lat: 48.863,
+            lng: 2.293
+          }
+        ]
+      },
+      {
+        id: "stop-interlaken",
+        cityName: "Interlaken & Lauterbrunnen",
+        country: "Switzerland",
+        coverImage: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+        dates: "Oct 10 - Oct 15 (5 Days)",
+        daysCount: 5,
+        expenseTier: "$$$",
+        popularityScore: 96,
+        activities: [
+          {
+            id: "ae-2",
+            name: "Jungfraujoch - Top of Europe Glacier Tour",
+            category: "Attraction",
+            location: "Lauterbrunnen Rail Station",
+            image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            time: "08:30 AM",
+            notes: "High altitude panoramic train ticket",
+            cost: 185,
+            durationMin: 300,
+            lat: 46.547,
+            lng: 7.982
+          }
+        ]
+      }
+    ]
+  }
+];
+
 export default function TripsPage() {
-  const [items, setItems] = useState<ItineraryItem[]>(INITIAL_ITEMS);
-  const [selectedMapDay, setSelectedMapDay] = useState<number | "ALL">(1);
-  const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
-  const [isAddSpotModalOpen, setIsAddSpotModalOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<"board" | "map" | "saved">("board");
+  const [trips, setTrips] = useState<Trip[]>(INITIAL_TRIPS);
+  const [selectedTripId, setSelectedTripId] = useState<string>(INITIAL_TRIPS[0].id);
+  const [viewTab, setViewTab] = useState<"gallery" | "builder" | "preview" | "timeline" | "budget">("builder");
 
-  // Form state for new custom spot
-  const [newSpotName, setNewSpotName] = useState("");
-  const [newSpotCategory, setNewSpotCategory] = useState<"Hotel" | "Attraction" | "Restaurant" | "Activity">("Attraction");
-  const [newSpotDay, setNewSpotDay] = useState(1);
-  const [newSpotTime, setNewSpotTime] = useState("10:00 AM");
-  const [newSpotNotes, setNewSpotNotes] = useState("");
+  // --- MODAL STATES ---
+  const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
+  const [isAddCityOpen, setIsAddCityOpen] = useState(false);
+  const [isAddActivityOpen, setIsAddActivityOpen] = useState(false);
+  const [activeStopIdForActivity, setActiveStopIdForActivity] = useState<string>("");
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
-  const days = [1, 2, 3];
+  // --- CREATE TRIP FORM STATE ---
+  const [newTripName, setNewTripName] = useState("");
+  const [newTripDesc, setNewTripDesc] = useState("");
+  const [newTripStart, setNewTripStart] = useState("2026-10-01");
+  const [newTripEnd, setNewTripEnd] = useState("2026-10-10");
+  const [newTripCover, setNewTripCover] = useState("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80");
+  const [newTripBudget, setNewTripBudget] = useState(2500);
 
-  // Move item to another day or saved pool
-  const moveItemToDay = (id: string, targetDay: number) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, day: targetDay } : item))
-    );
+  // --- CITY & ACTIVITY SEARCH QUERIES ---
+  const [citySearchQuery, setCitySearchQuery] = useState("");
+  const [activitySearchQuery, setActivitySearchQuery] = useState("");
+  const [activityCategoryFilter, setActivityCategoryFilter] = useState("ALL");
+
+  // Selected Active Trip
+  const activeTrip = trips.find((t) => t.id === selectedTripId) || trips[0];
+
+  // Calculate Costs
+  const allActivities = activeTrip?.stops?.flatMap((s) => s.activities) || [];
+  const totalTripCost = allActivities.reduce((acc, act) => acc + act.cost, 0);
+
+  const costByCategory = {
+    Hotel: allActivities.filter((a) => a.category === "Hotel").reduce((sum, a) => sum + a.cost, 0),
+    Attraction: allActivities.filter((a) => a.category === "Attraction").reduce((sum, a) => sum + a.cost, 0),
+    Restaurant: allActivities.filter((a) => a.category === "Restaurant").reduce((sum, a) => sum + a.cost, 0),
+    Activity: allActivities.filter((a) => a.category === "Activity").reduce((sum, a) => sum + a.cost, 0),
+    Transport: allActivities.filter((a) => a.category === "Transport").reduce((sum, a) => sum + a.cost, 0),
   };
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  const isOverBudget = totalTripCost > activeTrip.targetBudget;
 
-  const handleAddSpot = (e: React.FormEvent) => {
+  // --- ACTIONS ---
+  const handleCreateTripSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSpotName.trim()) return;
+    if (!newTripName) return;
 
-    const newItem: ItineraryItem = {
-      id: `spot-${Date.now()}`,
-      name: newSpotName.trim(),
-      category: newSpotCategory,
-      location: "Bali, Indonesia",
-      image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      time: newSpotTime,
-      notes: newSpotNotes,
-      day: newSpotDay,
-      lat: -8.5 + (Math.random() - 0.5) * 0.4,
-      lng: 115.2 + (Math.random() - 0.5) * 0.4,
-      durationMin: 90,
+    const newTrip: Trip = {
+      id: `trip-${Date.now()}`,
+      name: newTripName,
+      description: newTripDesc || "Custom tailored adventure with Atlas smart planner.",
+      startDate: newTripStart,
+      endDate: newTripEnd,
+      coverImage: newTripCover,
+      targetBudget: Number(newTripBudget) || 2000,
+      stops: [
+        {
+          id: `stop-${Date.now()}`,
+          cityName: "First Destination",
+          country: "Explore",
+          coverImage: newTripCover,
+          dates: `${newTripStart} - ${newTripEnd}`,
+          daysCount: 4,
+          expenseTier: "$$",
+          popularityScore: 95,
+          activities: []
+        }
+      ]
     };
 
-    setItems((prev) => [...prev, newItem]);
-    setIsAddSpotModalOpen(false);
-    setNewSpotName("");
-    setNewSpotNotes("");
+    setTrips([newTrip, ...trips]);
+    setSelectedTripId(newTrip.id);
+    setIsCreateTripOpen(false);
+    setViewTab("builder");
+    // Reset
+    setNewTripName("");
+    setNewTripDesc("");
   };
 
-  // Map spots filtered by selected map day
-  const mapSpots = items.filter((item) =>
-    selectedMapDay === "ALL" ? item.day > 0 : item.day === selectedMapDay
+  const handleDeleteTrip = (tripId: string) => {
+    if (trips.length <= 1) {
+      alert("You must keep at least one active trip.");
+      return;
+    }
+    const filtered = trips.filter((t) => t.id !== tripId);
+    setTrips(filtered);
+    setSelectedTripId(filtered[0].id);
+  };
+
+  const handleDuplicateTrip = (trip: Trip) => {
+    const duplicated: Trip = {
+      ...trip,
+      id: `trip-copy-${Date.now()}`,
+      name: `${trip.name} (Copy)`,
+    };
+    setTrips([duplicated, ...trips]);
+    setSelectedTripId(duplicated.id);
+  };
+
+  const handleAddCityStop = (city: typeof GLOBAL_CITIES_SEARCH[0]) => {
+    const newStop: CityStop = {
+      id: `stop-${Date.now()}`,
+      cityName: city.name,
+      country: city.country,
+      coverImage: city.image,
+      dates: "Custom Scheduled Dates",
+      daysCount: 3,
+      expenseTier: city.expenseTier,
+      popularityScore: city.popularityScore,
+      activities: []
+    };
+
+    const updatedStops = [...activeTrip.stops, newStop];
+    const updatedTrips = trips.map((t) =>
+      t.id === activeTrip.id ? { ...t, stops: updatedStops } : t
+    );
+    setTrips(updatedTrips);
+    setIsAddCityOpen(false);
+  };
+
+  const handleRemoveCityStop = (stopId: string) => {
+    const updatedStops = activeTrip.stops.filter((s) => s.id !== stopId);
+    const updatedTrips = trips.map((t) =>
+      t.id === activeTrip.id ? { ...t, stops: updatedStops } : t
+    );
+    setTrips(updatedTrips);
+  };
+
+  const handleMoveCityStop = (index: number, direction: "up" | "down") => {
+    const stops = [...activeTrip.stops];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= stops.length) return;
+
+    const temp = stops[index];
+    stops[index] = stops[targetIndex];
+    stops[targetIndex] = temp;
+
+    const updatedTrips = trips.map((t) =>
+      t.id === activeTrip.id ? { ...t, stops } : t
+    );
+    setTrips(updatedTrips);
+  };
+
+  const handleAddActivityToStop = (activity: typeof GLOBAL_ACTIVITIES_SEARCH[0]) => {
+    if (!activeStopIdForActivity) return;
+
+    const newAct: ActivityItem = {
+      id: `act-${Date.now()}`,
+      name: activity.name,
+      category: activity.category,
+      location: activity.location,
+      image: activity.image,
+      time: "10:00 AM",
+      notes: "Custom booked activity on Atlas",
+      cost: activity.cost,
+      durationMin: activity.durationMin,
+      lat: 0,
+      lng: 0
+    };
+
+    const updatedStops = activeTrip.stops.map((stop) => {
+      if (stop.id === activeStopIdForActivity) {
+        return { ...stop, activities: [...stop.activities, newAct] };
+      }
+      return stop;
+    });
+
+    const updatedTrips = trips.map((t) =>
+      t.id === activeTrip.id ? { ...t, stops: updatedStops } : t
+    );
+    setTrips(updatedTrips);
+    setIsAddActivityOpen(false);
+  };
+
+  const handleRemoveActivity = (stopId: string, activityId: string) => {
+    const updatedStops = activeTrip.stops.map((stop) => {
+      if (stop.id === stopId) {
+        return {
+          ...stop,
+          activities: stop.activities.filter((a) => a.id !== activityId)
+        };
+      }
+      return stop;
+    });
+
+    const updatedTrips = trips.map((t) =>
+      t.id === activeTrip.id ? { ...t, stops: updatedStops } : t
+    );
+    setTrips(updatedTrips);
+  };
+
+  const handleCopyShareLink = () => {
+    const url = `${typeof window !== "undefined" ? window.location.origin : ""}/trips/share/${activeTrip.id}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  // Filtered Cities & Activities
+  const filteredCities = GLOBAL_CITIES_SEARCH.filter(
+    (c) =>
+      c.name.toLowerCase().includes(citySearchQuery.toLowerCase()) ||
+      c.country.toLowerCase().includes(citySearchQuery.toLowerCase())
   );
 
-  const savedPoolItems = items.filter((item) => item.day === 0);
+  const filteredActivities = GLOBAL_ACTIVITIES_SEARCH.filter((a) => {
+    const matchesSearch =
+      a.name.toLowerCase().includes(activitySearchQuery.toLowerCase()) ||
+      a.location.toLowerCase().includes(activitySearchQuery.toLowerCase());
+    const matchesCat =
+      activityCategoryFilter === "ALL" || a.category.toUpperCase() === activityCategoryFilter.toUpperCase();
+    return matchesSearch && matchesCat;
+  });
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pb-16">
-      {/* Header Banner */}
-      <div className="bg-white border-b border-gray-200 sticky top-18 sm:top-20 z-20 shadow-2xs">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="min-h-screen bg-[#fbf9f5] pb-24 text-gray-900">
+      {/* Top Header Banner */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Trip Selector & Title */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#00af87] text-white flex items-center justify-center shadow-md shrink-0">
+              <Compass className="w-5 h-5" />
+            </div>
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold text-[#00af87] uppercase tracking-wide">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Trip Planner & Route Board</span>
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedTripId}
+                  onChange={(e) => setSelectedTripId(e.target.value)}
+                  className="font-black text-base sm:text-lg text-gray-900 bg-transparent hover:bg-gray-100/80 rounded-lg px-1.5 py-0.5 border border-transparent hover:border-gray-200 cursor-pointer focus:outline-none transition max-w-[220px] sm:max-w-md truncate"
+                >
+                  {trips.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[11px] font-bold text-[#00af87] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                  {activeTrip.stops.length} {activeTrip.stops.length === 1 ? "Stop" : "Stops"}
+                </span>
               </div>
-              <h1 className="text-xl sm:text-3xl font-black text-gray-950 mt-0.5">
-                Bali Summer Escape 🌴
-              </h1>
               <p className="text-xs text-gray-500 font-medium">
-                Aug 24 – Aug 30, 2026 • 2 Travelers • 6 Scheduled Places • 2 Saved Spots
+                {activeTrip.startDate} &bull; Est. Cost: ${totalTripCost} / ${activeTrip.targetBudget}
               </p>
             </div>
-
-            {/* Actions & View Controls */}
-            <div className="flex items-center gap-2">
-              {/* Mobile View Toggle */}
-              <div className="flex lg:hidden bg-gray-100 p-1 rounded-full border border-gray-200">
-                <button
-                  onClick={() => setMobileView("board")}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                    mobileView === "board" ? "bg-white text-black shadow-xs" : "text-gray-600"
-                  }`}
-                >
-                  Board
-                </button>
-                <button
-                  onClick={() => setMobileView("map")}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                    mobileView === "map" ? "bg-white text-black shadow-xs" : "text-gray-600"
-                  }`}
-                >
-                  Route Map
-                </button>
-                <button
-                  onClick={() => setMobileView("saved")}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                    mobileView === "saved" ? "bg-white text-black shadow-xs" : "text-gray-600"
-                  }`}
-                >
-                  Saved ({savedPoolItems.length})
-                </button>
-              </div>
-
-              <Button
-                variant="outline"
-                className="hidden sm:flex rounded-full border-gray-300 text-xs font-bold gap-1.5"
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: "Bali Trip Itinerary", url: window.location.href });
-                  } else {
-                    alert("Itinerary link copied to clipboard!");
-                  }
-                }}
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                <span>Share</span>
-              </Button>
-
-              <Button
-                onClick={() => setIsAddSpotModalOpen(true)}
-                className="rounded-full bg-[#00af87] hover:bg-[#009673] text-white text-xs font-bold gap-1.5 px-4 shadow-sm"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Add Spot</span>
-              </Button>
-            </div>
           </div>
+
+          {/* Quick Actions & Navigation Tabs */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              size="sm"
+              onClick={() => setIsCreateTripOpen(true)}
+              className="bg-black hover:bg-gray-800 text-white text-xs font-bold rounded-2xl h-9 px-3.5 flex items-center gap-1.5 shadow-sm"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Trip</span>
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsShareModalOpen(true)}
+              className="border-gray-300 text-gray-700 text-xs font-bold rounded-2xl h-9 px-3.5 flex items-center gap-1.5 hover:bg-gray-50"
+            >
+              <Share2 className="w-3.5 h-3.5 text-[#00af87]" />
+              <span>Share</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* View Switcher Sub-Tabs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2 border-t border-gray-100">
+          <button
+            onClick={() => setViewTab("gallery")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              viewTab === "gallery"
+                ? "bg-[#00af87] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>My Trips ({trips.length})</span>
+          </button>
+
+          <button
+            onClick={() => setViewTab("builder")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              viewTab === "builder"
+                ? "bg-[#00af87] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>Itinerary Builder</span>
+          </button>
+
+          <button
+            onClick={() => setViewTab("preview")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              viewTab === "preview"
+                ? "bg-[#00af87] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Preview Mode</span>
+          </button>
+
+          <button
+            onClick={() => setViewTab("timeline")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              viewTab === "timeline"
+                ? "bg-[#00af87] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Calendar & Timeline</span>
+          </button>
+
+          <button
+            onClick={() => setViewTab("budget")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              viewTab === "budget"
+                ? "bg-[#00af87] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <PieChartIcon className="w-3.5 h-3.5" />
+            <span>Budget & Charts</span>
+            {isOverBudget && (
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Main Board & Interactive Route Map */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* Left Column: Multi-Day Itinerary Board & Saved Pool (8 Cols on Desktop) */}
-          <div
-            className={`lg:col-span-7 xl:col-span-8 space-y-6 ${
-              mobileView === "map" ? "hidden lg:block" : ""
-            } ${mobileView === "saved" ? "hidden lg:block" : ""}`}
-          >
-            {/* Unassigned Saved Spots Drawer / Bar */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Bookmark className="h-4 w-4 text-[#00af87]" />
-                  <h3 className="font-extrabold text-sm text-gray-900">
-                    Saved Spots ({savedPoolItems.length})
-                  </h3>
-                  <span className="text-[11px] text-gray-400 font-medium">
-                    Move spots into specific days
-                  </span>
-                </div>
-                <Link href="/listings?query=Bali" className="text-xs text-[#00af87] font-bold hover:underline">
-                  + Find more places
-                </Link>
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+        {/* ========================================================================= */}
+        {/* TAB 1: MY TRIPS GALLERY (Feature #4) */}
+        {/* ========================================================================= */}
+        {viewTab === "gallery" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-200 shadow-2xs">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-gray-900">My Travel Itineraries</h2>
+                <p className="text-xs text-gray-500 mt-1">
+                  Manage all your ongoing, planned, and archived multi-city adventures.
+                </p>
               </div>
-
-              {savedPoolItems.length === 0 ? (
-                <div className="p-4 rounded-2xl bg-gray-50 border border-dashed border-gray-200 text-center text-xs text-gray-500">
-                  All saved spots are assigned to your days! Search places to add more.
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {savedPoolItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3 rounded-2xl bg-gray-50/80 border border-gray-200 hover:border-[#00af87] transition-all flex items-center justify-between gap-3 shadow-2xs group"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="relative h-10 w-10 rounded-xl overflow-hidden bg-gray-200 shrink-0">
-                          <Image src={item.image} alt={item.name} fill className="object-cover" />
-                        </div>
-                        <div className="truncate">
-                          <h4 className="font-bold text-xs text-gray-900 truncate">{item.name}</h4>
-                          <span className="text-[10px] text-gray-500">{item.location}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1 shrink-0">
-                        <select
-                          onChange={(e) => moveItemToDay(item.id, Number(e.target.value))}
-                          defaultValue=""
-                          className="bg-white border border-gray-300 rounded-lg px-2 py-1 text-[11px] font-bold text-[#00af87] outline-none shadow-2xs cursor-pointer"
-                        >
-                          <option value="" disabled>Move to...</option>
-                          <option value="1">Day 1</option>
-                          <option value="2">Day 2</option>
-                          <option value="3">Day 3</option>
-                        </select>
-                        <button
-                          onClick={() => removeItem(item.id)}
-                          className="p-1 text-gray-400 hover:text-rose-500 rounded-md"
-                          title="Remove spot"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <Button
+                onClick={() => setIsCreateTripOpen(true)}
+                className="bg-[#00af87] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl h-10 px-5 shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Create New Trip</span>
+              </Button>
             </div>
 
-            {/* Days Itinerary Columns */}
-            <div className="space-y-6">
-              {days.map((dayNum) => {
-                const dayItems = items.filter((i) => i.day === dayNum);
+            {/* Trip Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trips.map((trip) => {
+                const totalActs = trip.stops.flatMap((s) => s.activities).length;
+                const cost = trip.stops.flatMap((s) => s.activities).reduce((acc, a) => acc + a.cost, 0);
 
                 return (
                   <div
-                    key={dayNum}
-                    className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4"
+                    key={trip.id}
+                    className={`bg-white rounded-3xl border overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col group ${
+                      trip.id === selectedTripId ? "ring-2 ring-[#00af87] border-transparent" : "border-gray-200"
+                    }`}
                   >
-                    {/* Day Header */}
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-2xl bg-black text-white flex items-center justify-center font-black text-sm shadow-sm">
-                          D{dayNum}
+                    {/* Cover Photo */}
+                    <div className="relative h-44 w-full bg-gray-100 overflow-hidden">
+                      <Image
+                        src={trip.coverImage}
+                        alt={trip.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold text-gray-900 shadow-sm flex items-center gap-1.5">
+                        <Calendar className="w-3 h-3 text-[#00af87]" />
+                        <span>{trip.startDate}</span>
+                      </div>
+
+                      <div className="absolute bottom-3 left-3 right-3 text-white">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                          {trip.stops.length} Cities &bull; {totalActs} Activities
+                        </span>
+                        <h3 className="text-base font-black text-white leading-tight truncate mt-0.5">
+                          {trip.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                      <p className="text-xs text-gray-500 line-clamp-2 font-medium">
+                        {trip.description}
+                      </p>
+
+                      {/* Stops Pills */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {trip.stops.map((stop) => (
+                          <span
+                            key={stop.id}
+                            className="bg-gray-100 text-gray-700 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1"
+                          >
+                            <MapPin className="w-2.5 h-2.5 text-[#00af87]" />
+                            {stop.cityName}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Budget Meter */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-600 mb-1">
+                          <span>Est. Spend</span>
+                          <span className={cost > trip.targetBudget ? "text-rose-600" : "text-gray-900"}>
+                            ${cost} / ${trip.targetBudget}
+                          </span>
                         </div>
-                        <div>
-                          <h3 className="font-black text-base sm:text-lg text-gray-900">
-                            Day {dayNum} — {dayNum === 1 ? "Nusa Dua & South Coast" : dayNum === 2 ? "Islands & Fine Dining" : "Ubud Culture & Sacred Temples"}
-                          </h3>
-                          <p className="text-xs text-gray-500 font-medium">
-                            {dayItems.length} activities scheduled
-                          </p>
+                        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              cost > trip.targetBudget ? "bg-rose-500" : "bg-[#00af87]"
+                            }`}
+                            style={{ width: `${Math.min((cost / trip.targetBudget) * 100, 100)}%` }}
+                          />
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => setSelectedMapDay(dayNum)}
-                        className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
-                          selectedMapDay === dayNum
-                            ? "bg-[#00af87] text-white border-[#00af87]"
-                            : "bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200"
-                        }`}
-                      >
-                        Focus on Map
-                      </button>
-                    </div>
-
-                    {/* Day Activity Cards */}
-                    {dayItems.length === 0 ? (
-                      <div className="p-8 rounded-2xl border-2 border-dashed border-gray-200 text-center space-y-2">
-                        <p className="text-xs font-semibold text-gray-500">
-                          No activities scheduled for Day {dayNum} yet.
-                        </p>
+                      {/* Card Actions */}
+                      <div className="pt-2 flex items-center justify-between gap-2">
                         <Button
                           size="sm"
                           onClick={() => {
-                            setNewSpotDay(dayNum);
-                            setIsAddSpotModalOpen(true);
+                            setSelectedTripId(trip.id);
+                            setViewTab("builder");
                           }}
-                          className="rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 text-xs font-bold"
+                          className="flex-1 bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-xl h-9"
                         >
-                          + Add a spot to Day {dayNum}
+                          Open Builder
                         </Button>
+
+                        <button
+                          title="Duplicate Trip"
+                          onClick={() => handleDuplicateTrip(trip)}
+                          className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          title="Delete Trip"
+                          onClick={() => handleDeleteTrip(trip.id)}
+                          className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {dayItems.map((item, idx) => {
-                          const isHighlighted = highlightedItemId === item.id;
-
-                          return (
-                            <div key={item.id}>
-                              {/* Itinerary Item Card */}
-                              <div
-                                onMouseEnter={() => setHighlightedItemId(item.id)}
-                                onMouseLeave={() => setHighlightedItemId(null)}
-                                className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row items-start gap-4 ${
-                                  isHighlighted
-                                    ? "bg-emerald-50/60 border-[#00af87] shadow-md ring-2 ring-[#00af87]/20"
-                                    : "bg-white border-gray-200/90 hover:border-gray-300 shadow-2xs"
-                                }`}
-                              >
-                                {/* Drag Handle & Stop Number Badge */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <div className="h-7 w-7 rounded-xl bg-[#00af87] text-white flex items-center justify-center font-black text-xs shadow-2xs">
-                                    {idx + 1}
-                                  </div>
-                                </div>
-
-                                {/* Thumbnail */}
-                                <div className="relative w-full sm:w-28 h-28 sm:h-20 rounded-xl overflow-hidden bg-gray-100 shrink-0">
-                                  <Image
-                                    src={item.image}
-                                    alt={item.name}
-                                    fill
-                                    className="object-cover"
-                                  />
-                                  <span className="absolute bottom-1 left-1 px-1.5 py-0.2 rounded bg-black/75 text-white text-[9px] font-bold">
-                                    {item.category}
-                                  </span>
-                                </div>
-
-                                {/* Details */}
-                                <div className="flex-1 min-w-0 space-y-1 w-full">
-                                  <div className="flex items-center justify-between">
-                                    <h4 className="font-extrabold text-sm sm:text-base text-gray-900 truncate">
-                                      {item.name}
-                                    </h4>
-                                    <span className="flex items-center gap-1 text-xs font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-lg shrink-0">
-                                      <Clock className="h-3 w-3 text-[#00af87]" />
-                                      {item.time}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                                    <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                                    <span className="truncate">{item.location}</span>
-                                  </div>
-
-                                  {item.notes && (
-                                    <p className="text-xs text-gray-600 bg-amber-50/70 border border-amber-200/50 p-2 rounded-xl mt-1">
-                                      💡 {item.notes}
-                                    </p>
-                                  )}
-                                </div>
-
-                                {/* Item Actions */}
-                                <div className="flex sm:flex-col items-center justify-between sm:justify-start gap-1 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
-                                  <select
-                                    value={item.day}
-                                    onChange={(e) => moveItemToDay(item.id, Number(e.target.value))}
-                                    className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-[11px] font-semibold text-gray-700 outline-none cursor-pointer"
-                                  >
-                                    <option value="1">Day 1</option>
-                                    <option value="2">Day 2</option>
-                                    <option value="3">Day 3</option>
-                                    <option value="0">Unassign (Saved)</option>
-                                  </select>
-
-                                  <button
-                                    onClick={() => removeItem(item.id)}
-                                    className="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-                                    title="Remove"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Drive time indicator to next stop */}
-                              {idx < dayItems.length - 1 && (
-                                <div className="py-1 px-8 flex items-center gap-2 text-[11px] font-semibold text-gray-400">
-                                  <div className="w-0.5 h-4 bg-gray-200 ml-3" />
-                                  <Car className="h-3 w-3 text-emerald-600" />
-                                  <span>approx. 20–35 min drive to next stop</span>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
+        )}
 
-          {/* Right Column: Interactive Route Map with Canvas Visuals (4/5 Cols on Desktop) */}
-          <div
-            className={`lg:col-span-5 xl:col-span-4 sticky top-36 space-y-4 ${
-              mobileView === "board" ? "hidden lg:block" : ""
-            }`}
-          >
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-lg space-y-4">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <MapIcon className="h-5 w-5 text-[#00af87]" />
-                  <h3 className="font-extrabold text-sm sm:text-base text-gray-900">
-                    Interactive Route Map
-                  </h3>
+        {/* ========================================================================= */}
+        {/* TAB 2: ITINERARY BUILDER (Features #5, #7, #8) */}
+        {/* ========================================================================= */}
+        {viewTab === "builder" && (
+          <div className="space-y-6">
+            {/* Trip Hero Header */}
+            <div className="relative rounded-3xl overflow-hidden bg-gray-900 text-white min-h-[160px] p-6 sm:p-8 flex flex-col justify-between shadow-md">
+              <Image
+                src={activeTrip.coverImage}
+                alt={activeTrip.name}
+                fill
+                className="object-cover opacity-35"
+              />
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                    Atlas Itinerary Planner &bull; {activeTrip.startDate} to {activeTrip.endDate}
+                  </span>
+                  <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">
+                    {activeTrip.name}
+                  </h1>
+                  <p className="text-xs text-gray-300 mt-1 max-w-2xl font-medium">
+                    {activeTrip.description}
+                  </p>
                 </div>
 
-                {/* Filter Route by Day */}
-                <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-full text-xs">
-                  <button
-                    onClick={() => setSelectedMapDay("ALL")}
-                    className={`px-2.5 py-1 rounded-full font-bold transition-colors ${
-                      selectedMapDay === "ALL" ? "bg-black text-white" : "text-gray-600"
-                    }`}
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setIsAddCityOpen(true);
+                      setCitySearchQuery("");
+                    }}
+                    className="bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-2xl h-10 px-4 shadow-lg flex items-center gap-1.5"
                   >
-                    All Days
-                  </button>
-                  {days.map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => setSelectedMapDay(d)}
-                      className={`px-2.5 py-1 rounded-full font-bold transition-colors ${
-                        selectedMapDay === d ? "bg-[#00af87] text-white" : "text-gray-600"
-                      }`}
-                    >
-                      D{d}
-                    </button>
-                  ))}
+                    <Plus className="w-4 h-4" />
+                    <span>Add City Stop</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* City Stops List */}
+            <div className="space-y-6">
+              {activeTrip.stops.map((stop, index) => (
+                <div
+                  key={stop.id}
+                  className="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden"
+                >
+                  {/* Stop Header Banner */}
+                  <div className="p-4 sm:p-5 bg-gradient-to-r from-gray-50 via-white to-emerald-50/40 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-black text-base text-gray-900">
+                            {stop.cityName}, {stop.country}
+                          </h3>
+                          <span className="text-[10px] font-bold text-[#00af87] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            {stop.expenseTier} &bull; {stop.popularityScore}% Popularity
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 font-medium">
+                          {stop.dates} &bull; {stop.activities.length} planned activities
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Reordering & Actions */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        title="Move Stop Up"
+                        disabled={index === 0}
+                        onClick={() => handleMoveCityStop(index, "up")}
+                        className="p-1.5 text-gray-400 hover:text-gray-700 disabled:opacity-30 rounded-lg hover:bg-gray-100"
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        title="Move Stop Down"
+                        disabled={index === activeTrip.stops.length - 1}
+                        onClick={() => handleMoveCityStop(index, "down")}
+                        className="p-1.5 text-gray-400 hover:text-gray-700 disabled:opacity-30 rounded-lg hover:bg-gray-100"
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setActiveStopIdForActivity(stop.id);
+                          setIsAddActivityOpen(true);
+                          setActivitySearchQuery("");
+                        }}
+                        className="h-8 text-xs font-bold rounded-xl border-gray-300 hover:border-[#00af87] hover:text-[#00af87] flex items-center gap-1"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>Add Activity</span>
+                      </Button>
+
+                      <button
+                        title="Remove Stop"
+                        onClick={() => handleRemoveCityStop(stop.id)}
+                        className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Stop Activities List */}
+                  <div className="p-4 sm:p-5 space-y-3">
+                    {stop.activities.length === 0 ? (
+                      <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                        <Compass className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                        <p className="text-xs font-bold text-gray-600">No activities added for {stop.cityName} yet</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">Add hotels, sightseeing tours, and culinary spots</p>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setActiveStopIdForActivity(stop.id);
+                            setIsAddActivityOpen(true);
+                          }}
+                          className="mt-3 bg-[#00af87] text-white text-xs font-bold rounded-xl h-8"
+                        >
+                          + Browse Activities & Stays
+                        </Button>
+                      </div>
+                    ) : (
+                      stop.activities.map((act) => (
+                        <div
+                          key={act.id}
+                          className="p-3.5 sm:p-4 rounded-2xl bg-gray-50/70 hover:bg-emerald-50/30 border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition group"
+                        >
+                          <div className="flex items-center gap-3.5">
+                            <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-200">
+                              <Image
+                                src={act.image}
+                                alt={act.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full text-white ${
+                                  act.category === "Hotel" ? "bg-indigo-600" :
+                                  act.category === "Restaurant" ? "bg-amber-600" :
+                                  act.category === "Transport" ? "bg-sky-600" : "bg-[#00af87]"
+                                }`}>
+                                  {act.category}
+                                </span>
+                                <span className="text-[11px] font-bold text-gray-400 flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {act.time} ({act.durationMin}m)
+                                </span>
+                              </div>
+                              <h4 className="font-bold text-xs sm:text-sm text-gray-900 mt-0.5 group-hover:text-[#00af87] transition">
+                                {act.name}
+                              </h4>
+                              <p className="text-[11px] text-gray-500 truncate max-w-sm">
+                                {act.location} &bull; <span className="italic">{act.notes}</span>
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200">
+                            <span className="font-black text-xs sm:text-sm text-gray-900">
+                              ${act.cost}
+                            </span>
+                            <button
+                              onClick={() => handleRemoveActivity(stop.id, act.id)}
+                              className="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: PREVIEW MODE (Feature #6) */}
+        {/* ========================================================================= */}
+        {viewTab === "preview" && (
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200 shadow-sm space-y-8">
+            <div className="border-b border-gray-200 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-xs font-bold text-[#00af87] uppercase tracking-wider">
+                  Finished Itinerary Preview &bull; {activeTrip.startDate} to {activeTrip.endDate}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mt-1">{activeTrip.name}</h2>
+                <p className="text-xs text-gray-500 mt-1 font-medium">{activeTrip.description}</p>
+              </div>
+              <Button
+                onClick={() => window.print()}
+                variant="outline"
+                className="rounded-2xl border-gray-300 text-xs font-bold h-10 px-4"
+              >
+                Print / Save as PDF
+              </Button>
+            </div>
+
+            {/* Stops Grouped */}
+            <div className="space-y-8">
+              {activeTrip.stops.map((stop, sIdx) => (
+                <div key={stop.id} className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#00af87] text-white font-black text-xs flex items-center justify-center">
+                      {sIdx + 1}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-gray-900">{stop.cityName}, {stop.country}</h3>
+                      <p className="text-xs text-gray-500 font-medium">{stop.dates}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-11">
+                    {stop.activities.map((act) => (
+                      <div key={act.id} className="p-4 rounded-2xl bg-gray-50 border border-gray-200/80 flex gap-3">
+                        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-200 shrink-0">
+                          <Image src={act.image} alt={act.name} fill className="object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-[#00af87] uppercase">{act.category}</span>
+                            <span className="text-xs font-black text-gray-900">${act.cost}</span>
+                          </div>
+                          <h4 className="font-bold text-xs text-gray-900 truncate mt-0.5">{act.name}</h4>
+                          <p className="text-[10px] text-gray-500 truncate">{act.location}</p>
+                          <p className="text-[10px] text-gray-400 mt-1 italic truncate">"{act.notes}"</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4: CALENDAR & TIMELINE (Feature #10) */}
+        {/* ========================================================================= */}
+        {viewTab === "timeline" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left: Vertical Timeline */}
+            <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-black text-gray-900">Trip Day-by-Day Timeline</h2>
+                  <p className="text-xs text-gray-500">Chronological flow of scheduled activities</p>
                 </div>
               </div>
 
-              {/* Map Canvas Simulation */}
-              <div className="relative w-full h-80 sm:h-96 rounded-2xl overflow-hidden bg-[#e5e3df] border border-gray-300 shadow-inner">
-                {/* Visual Map Texture */}
-                <div className="absolute inset-0 bg-[radial-gradient(#00af87_1.5px,transparent_1.5px)] [background-size:24px_24px] opacity-30" />
-                
-                {/* Bali Island Vector Silhouette Representation */}
-                <svg
-                  className="absolute inset-0 w-full h-full text-emerald-100/80 pointer-events-none"
-                  viewBox="0 0 400 300"
-                  fill="currentColor"
-                >
-                  <path d="M 50 150 Q 120 80 220 100 Q 340 110 360 180 Q 320 240 200 230 Q 100 250 50 150 Z" />
-                </svg>
+              <div className="relative pl-6 border-l-2 border-dashed border-[#00af87] space-y-8 my-4">
+                {allActivities.map((act, i) => (
+                  <div key={act.id} className="relative group">
+                    {/* Circle Node */}
+                    <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-[#00af87] group-hover:scale-125 transition-transform" />
 
-                {/* SVG Route Connecting Path Lines */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 300">
-                  <path
-                    d={
-                      selectedMapDay === 1
-                        ? "M 230 220 L 160 250"
-                        : selectedMapDay === 2
-                        ? "M 320 170 L 230 220"
-                        : selectedMapDay === 3
-                        ? "M 210 120 L 200 150"
-                        : "M 230 220 L 160 250 L 320 170 L 210 120 L 200 150"
-                    }
-                    fill="none"
-                    stroke="#00af87"
-                    strokeWidth="3"
-                    strokeDasharray="6,4"
-                    className="animate-pulse"
-                  />
-                </svg>
-
-                {/* Waypoint Markers */}
-                {mapSpots.map((spot, idx) => {
-                  const isHighlighted = highlightedItemId === spot.id;
-                  // Map coordinates approximation to SVG canvas box (400x300)
-                  const leftPercent = ((spot.lng - 115.0) / 0.6) * 100;
-                  const topPercent = ((-spot.lat - 8.3) / 0.6) * 100;
-
-                  return (
-                    <div
-                      key={spot.id}
-                      style={{
-                        left: `${Math.max(10, Math.min(85, leftPercent))}%`,
-                        top: `${Math.max(15, Math.min(85, topPercent))}%`,
-                      }}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
-                      onClick={() => setHighlightedItemId(spot.id)}
-                    >
-                      <div
-                        className={`relative flex items-center justify-center rounded-full font-black text-xs shadow-lg transition-transform ${
-                          isHighlighted
-                            ? "h-9 w-9 bg-black text-white scale-125 ring-4 ring-[#00af87]"
-                            : spot.day === 1
-                            ? "h-7 w-7 bg-[#00af87] text-white hover:scale-110"
-                            : spot.day === 2
-                            ? "h-7 w-7 bg-amber-500 text-white hover:scale-110"
-                            : "h-7 w-7 bg-purple-600 text-white hover:scale-110"
-                        }`}
-                      >
-                        {idx + 1}
-                      </div>
-
-                      {/* Map Popup Tooltip */}
-                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 hidden group-hover:block z-30 pointer-events-none">
-                        <div className="bg-black/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-xl shadow-xl whitespace-nowrap">
-                          {spot.name} • {spot.time}
+                    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-gray-200">
+                          <Image src={act.image} alt={act.name} fill className="object-cover" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-[#00af87]">{act.time}</span>
+                            <span className="text-[10px] font-bold text-gray-400">&bull; {act.durationMin} mins</span>
+                          </div>
+                          <h4 className="font-bold text-xs sm:text-sm text-gray-900">{act.name}</h4>
+                          <p className="text-[11px] text-gray-500">{act.location}</p>
                         </div>
                       </div>
+                      <div className="text-right font-black text-xs text-gray-900 shrink-0">
+                        ${act.cost}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Quick Calendar Overview */}
+            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-2xs space-y-4">
+              <h3 className="font-black text-sm text-gray-900 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#00af87]" />
+                <span>Trip Calendar Grid</span>
+              </h3>
+
+              <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-gray-400 py-2 border-b border-gray-100">
+                <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+              </div>
+
+              <div className="grid grid-cols-7 gap-1 text-center text-xs">
+                {Array.from({ length: 31 }).map((_, i) => {
+                  const dayNum = i + 1;
+                  const isScheduled = dayNum >= 10 && dayNum <= 18;
+                  return (
+                    <div
+                      key={i}
+                      className={`h-9 flex items-center justify-center rounded-xl font-bold ${
+                        isScheduled
+                          ? "bg-[#00af87] text-white shadow-xs"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      {dayNum}
                     </div>
                   );
                 })}
+              </div>
 
-                {/* Bottom Route Stats Overlay */}
-                <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-md border border-gray-200 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">
-                      {selectedMapDay === "ALL" ? "Total Full Trip Route" : `Day ${selectedMapDay} Route Summary`}
-                    </span>
-                    <span className="font-extrabold text-gray-900">
-                      {mapSpots.length} Stops • {mapSpots.length * 18} km Total
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 font-bold text-[#00af87]">
-                    <Car className="h-4 w-4" />
-                    <span>~{mapSpots.length * 25} min travel</span>
-                  </div>
+              <div className="pt-4 border-t border-gray-100">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 text-xs text-emerald-900">
+                  <strong>✨ Pro Tip:</strong> Your schedule has an average of 2-3 activities per day for optimal pacing.
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Add Custom Spot Modal */}
-      {isAddSpotModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
-            onClick={() => setIsAddSpotModalOpen(false)}
-          />
-          <div className="relative bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl z-10 space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <h3 className="font-black text-lg text-gray-900">Add Spot to Itinerary</h3>
-              <button
-                onClick={() => setIsAddSpotModalOpen(false)}
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
-              >
-                <X className="h-5 w-5" />
-              </button>
+        {/* ========================================================================= */}
+        {/* TAB 5: TRIP BUDGET & COST BREAKDOWN (Feature #9) */}
+        {/* ========================================================================= */}
+        {viewTab === "budget" && (
+          <div className="space-y-6">
+            {/* Top Budget Alert Card */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-2xs">
+                <span className="text-xs font-bold text-gray-400 uppercase">Target Budget</span>
+                <h3 className="text-2xl font-black text-gray-900 mt-1">${activeTrip.targetBudget}</h3>
+                <p className="text-[11px] text-gray-500 mt-0.5">Pre-set trip allowance</p>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-2xs">
+                <span className="text-xs font-bold text-gray-400 uppercase">Total Estimated Spend</span>
+                <h3 className={`text-2xl font-black mt-1 ${isOverBudget ? "text-rose-600" : "text-[#00af87]"}`}>
+                  ${totalTripCost}
+                </h3>
+                <p className="text-[11px] text-gray-500 mt-0.5">
+                  {isOverBudget ? "⚠️ Over budget by $" + (totalTripCost - activeTrip.targetBudget) : "Under budget by $" + (activeTrip.targetBudget - totalTripCost)}
+                </p>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-2xs">
+                <span className="text-xs font-bold text-gray-400 uppercase">Daily Average</span>
+                <h3 className="text-2xl font-black text-gray-900 mt-1">
+                  ${Math.round(totalTripCost / Math.max(activeTrip.stops.reduce((s, c) => s + c.daysCount, 0), 1))}
+                </h3>
+                <p className="text-[11px] text-gray-500 mt-0.5">Per day across all stops</p>
+              </div>
             </div>
 
-            <form onSubmit={handleAddSpot} className="space-y-4 text-xs font-medium">
+            {/* Category Breakdown & Progress Bars */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-5">
+                <h3 className="text-base font-black text-gray-900">Spending by Category</h3>
+
+                <div className="space-y-4">
+                  {Object.entries(costByCategory).map(([cat, amt]) => {
+                    const pct = totalTripCost > 0 ? Math.round((amt / totalTripCost) * 100) : 0;
+                    return (
+                      <div key={cat} className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs font-bold text-gray-700">
+                          <span className="flex items-center gap-2">
+                            <span className={`w-2.5 h-2.5 rounded-full ${
+                              cat === "Hotel" ? "bg-indigo-600" :
+                              cat === "Restaurant" ? "bg-amber-600" :
+                              cat === "Transport" ? "bg-sky-600" :
+                              cat === "Attraction" ? "bg-purple-600" : "bg-[#00af87]"
+                            }`} />
+                            {cat}
+                          </span>
+                          <span>${amt} ({pct}%)</span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              cat === "Hotel" ? "bg-indigo-600" :
+                              cat === "Restaurant" ? "bg-amber-600" :
+                              cat === "Transport" ? "bg-sky-600" :
+                              cat === "Attraction" ? "bg-purple-600" : "bg-[#00af87]"
+                            }`}
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Over Budget Alerts & Advice */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs flex flex-col justify-between space-y-4">
+                <div>
+                  <h3 className="text-base font-black text-gray-900 mb-2">Smart Budget Insights</h3>
+                  {isOverBudget ? (
+                    <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs space-y-1.5">
+                      <div className="flex items-center gap-2 font-black">
+                        <AlertTriangle className="w-4 h-4 text-rose-600" />
+                        <span>Daily Over-Budget Alert</span>
+                      </div>
+                      <p>
+                        Your trip total (${totalTripCost}) exceeds your allowance (${activeTrip.targetBudget}). Consider swapping high-end luxury stays or finding bundled tour packages.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs space-y-1.5">
+                      <div className="flex items-center gap-2 font-black">
+                        <CheckCircle2 className="w-4 h-4 text-[#00af87]" />
+                        <span>Optimal Budget Health</span>
+                      </div>
+                      <p>
+                        You are ${activeTrip.targetBudget - totalTripCost} below your ceiling. You have room for an extra fine dining experience or private transfer!
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 text-xs space-y-2">
+                  <span className="font-bold text-gray-700">Cost Breakdown Tips:</span>
+                  <ul className="text-gray-500 space-y-1 list-disc list-inside text-[11px]">
+                    <li>Lodging accounts for the majority of the cost ({Math.round((costByCategory.Hotel / (totalTripCost || 1)) * 100)}%).</li>
+                    <li>Booking tours 2 weeks in advance saves an average of 15%.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: CREATE TRIP (Feature #3) */}
+      {/* ========================================================================= */}
+      {isCreateTripOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-200 relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setIsCreateTripOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="text-xl font-black text-gray-900">Create New Trip Shell</h3>
+            <p className="text-xs text-gray-500 mt-1 mb-5">
+              Set the foundation for your next custom travel itinerary.
+            </p>
+
+            <form onSubmit={handleCreateTripSubmit} className="space-y-4">
               <div>
-                <label className="font-bold text-gray-700 uppercase block mb-1">Place Name</label>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Trip Name</label>
                 <input
                   type="text"
+                  value={newTripName}
+                  onChange={(e) => setNewTripName(e.target.value)}
+                  placeholder="e.g. 10 Days in Tokyo & Kyoto"
                   required
-                  value={newSpotName}
-                  onChange={(e) => setNewSpotName(e.target.value)}
-                  placeholder="e.g. Mount Batur Sunrise Trek"
-                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold outline-none focus:border-[#00af87]"
+                  className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-gray-700 uppercase block mb-1">Category</label>
-                  <select
-                    value={newSpotCategory}
-                    onChange={(e) => setNewSpotCategory(e.target.value as any)}
-                    className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold outline-none"
-                  >
-                    <option value="Attraction">Attraction</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Activity">Activity</option>
-                  </select>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={newTripStart}
+                    onChange={(e) => setNewTripStart(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                  />
                 </div>
-
                 <div>
-                  <label className="font-bold text-gray-700 uppercase block mb-1">Assign to</label>
-                  <select
-                    value={newSpotDay}
-                    onChange={(e) => setNewSpotDay(Number(e.target.value))}
-                    className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold outline-none"
-                  >
-                    <option value="1">Day 1</option>
-                    <option value="2">Day 2</option>
-                    <option value="3">Day 3</option>
-                    <option value="0">Saved Unassigned</option>
-                  </select>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">End Date</label>
+                  <input
+                    type="date"
+                    value={newTripEnd}
+                    onChange={(e) => setNewTripEnd(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                  />
                 </div>
               </div>
 
               <div>
-                <label className="font-bold text-gray-700 uppercase block mb-1">Scheduled Time</label>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Target Budget ($)</label>
+                <input
+                  type="number"
+                  value={newTripBudget}
+                  onChange={(e) => setNewTripBudget(Number(e.target.value))}
+                  placeholder="2500"
+                  className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Description (Optional)</label>
+                <textarea
+                  value={newTripDesc}
+                  onChange={(e) => setNewTripDesc(e.target.value)}
+                  placeholder="What is the goal of this journey?"
+                  rows={2}
+                  className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">Select Cover Image</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                  ].map((url, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setNewTripCover(url)}
+                      className={`relative h-16 rounded-xl overflow-hidden cursor-pointer border-2 transition ${
+                        newTripCover === url ? "border-[#00af87] ring-2 ring-[#00af87]" : "border-transparent opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <Image src={url} alt="Cover" fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-11 bg-[#00af87] hover:bg-[#009b77] text-white font-bold text-xs rounded-2xl shadow-lg mt-2"
+              >
+                Create Trip & Open Itinerary
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: CITY SEARCH (Feature #7) */}
+      {/* ========================================================================= */}
+      {isAddCityOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 relative max-h-[85vh] flex flex-col">
+            <button
+              onClick={() => setIsAddCityOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="text-xl font-black text-gray-900">Add City Stop</h3>
+            <p className="text-xs text-gray-500 mt-0.5 mb-4">
+              Explore cities with expense ratings and traveler popularity
+            </p>
+
+            <div className="relative mb-4">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={citySearchQuery}
+                onChange={(e) => setCitySearchQuery(e.target.value)}
+                placeholder="Search city or country (e.g. Bali, Paris, Goa, Tokyo)..."
+                className="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+              />
+            </div>
+
+            {/* City Search Results */}
+            <div className="overflow-y-auto space-y-3 flex-1 pr-1">
+              {filteredCities.map((city) => (
+                <div
+                  key={city.id}
+                  className="p-3.5 rounded-2xl bg-gray-50 hover:bg-emerald-50/50 border border-gray-200/90 flex items-center justify-between gap-3 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-200 shrink-0">
+                      <Image src={city.image} alt={city.name} fill className="object-cover" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-xs sm:text-sm text-gray-900">{city.name}</h4>
+                        <span className="text-[10px] text-gray-500 font-medium">({city.country})</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-0.5">
+                        <span className="font-black text-[#00af87]">Cost: {city.expenseTier}</span>
+                        <span>&bull;</span>
+                        <span>★ {city.popularityScore}% Popularity</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleAddCityStop(city)}
+                    className="bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-xl h-8 px-3 shrink-0"
+                  >
+                    + Add Stop
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: ACTIVITY SEARCH (Feature #8) */}
+      {/* ========================================================================= */}
+      {isAddActivityOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-gray-200 relative max-h-[85vh] flex flex-col">
+            <button
+              onClick={() => setIsAddActivityOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="text-xl font-black text-gray-900">Add Activity & Stays</h3>
+            <p className="text-xs text-gray-500 mt-0.5 mb-4">
+              Filter by category, duration, and estimated cost
+            </p>
+
+            <div className="space-y-3 mb-4">
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  value={newSpotTime}
-                  onChange={(e) => setNewSpotTime(e.target.value)}
-                  placeholder="e.g. 10:00 AM"
-                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold outline-none focus:border-[#00af87]"
+                  value={activitySearchQuery}
+                  onChange={(e) => setActivitySearchQuery(e.target.value)}
+                  placeholder="Search activities, dining, tickets..."
+                  className="w-full pl-10 pr-4 py-2 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
                 />
               </div>
 
-              <div>
-                <label className="font-bold text-gray-700 uppercase block mb-1">Notes & Tips</label>
-                <textarea
-                  rows={3}
-                  value={newSpotNotes}
-                  onChange={(e) => setNewSpotNotes(e.target.value)}
-                  placeholder="e.g. Book guide in advance, dress code requirements..."
-                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold outline-none focus:border-[#00af87] resize-none"
-                />
+              {/* Category Filter Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                {["ALL", "HOTEL", "RESTAURANT", "ATTRACTION", "ACTIVITY", "TRANSPORT"].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActivityCategoryFilter(cat)}
+                    className={`px-3 py-1 rounded-xl text-[10px] font-bold transition shrink-0 ${
+                      activityCategoryFilter === cat
+                        ? "bg-[#00af87] text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Results */}
+            <div className="overflow-y-auto space-y-3 flex-1 pr-1">
+              {filteredActivities.map((act) => (
+                <div
+                  key={act.id}
+                  className="p-3.5 rounded-2xl bg-gray-50 hover:bg-emerald-50/50 border border-gray-200/90 flex items-center justify-between gap-3 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-200 shrink-0">
+                      <Image src={act.image} alt={act.name} fill className="object-cover" />
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-black uppercase text-[#00af87]">{act.category}</span>
+                      <h4 className="font-bold text-xs sm:text-sm text-gray-900">{act.name}</h4>
+                      <p className="text-[10px] text-gray-500">
+                        {act.location} &bull; {act.durationMin}m duration &bull; <strong>${act.cost}</strong>
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleAddActivityToStop(act)}
+                    className="bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-xl h-8 px-3 shrink-0"
+                  >
+                    + Add
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 4: SHARE PUBLIC LINK (Feature #11) */}
+      {/* ========================================================================= */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-200 relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setIsShareModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#00af87] flex items-center justify-center mb-4">
+              <Share2 className="w-5 h-5" />
+            </div>
+
+            <h3 className="text-xl font-black text-gray-900">Share Public Itinerary</h3>
+            <p className="text-xs text-gray-500 mt-1 mb-5">
+              Anyone with this link can view this trip and 1-click clone it into their own account!
+            </p>
+
+            <div className="space-y-4">
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-between gap-2">
+                <span className="text-xs text-gray-600 font-mono truncate">
+                  {typeof window !== "undefined" ? window.location.origin : ""}/trips/share/{activeTrip.id}
+                </span>
+                <Button
+                  size="sm"
+                  onClick={handleCopyShareLink}
+                  className="bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-xl h-8 px-3 shrink-0 flex items-center gap-1"
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedLink ? "Copied!" : "Copy"}</span>
+                </Button>
               </div>
 
-              <div className="pt-2 flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsAddSpotModalOpen(false)}
-                  className="flex-1 rounded-full text-xs font-bold"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1 rounded-full bg-[#00af87] hover:bg-[#009673] text-white text-xs font-bold"
-                >
-                  Save to Itinerary
-                </Button>
-              </div>
-            </form>
+              <NextLink
+                href={`/trips/share/${activeTrip.id}`}
+                target="_blank"
+                className="w-full py-2.5 px-4 bg-gray-900 hover:bg-black text-white rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"
+              >
+                <span>Open Public View</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </NextLink>
+            </div>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   Search,
   Filter,
@@ -29,6 +30,15 @@ import {
   RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const DynamicMapView = dynamic(() => import("@/components/listings/MapView"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-80 sm:h-96 rounded-3xl bg-[#e6e2dc] animate-pulse flex items-center justify-center border border-gray-300">
+      <span className="text-gray-500 font-bold">Loading Map...</span>
+    </div>
+  ),
+});
 
 interface PlaceListing {
   id: string;
@@ -424,42 +434,15 @@ function ListingsContent() {
               </div>
             )}
 
-            {/* Interactive Map View */}
+            {/* Interactive Real Map View */}
             {!isLoading && viewMode === "map" && (
-              <div className="w-full h-80 sm:h-96 rounded-3xl bg-[#e6e2dc] overflow-hidden relative border border-gray-300 shadow-inner flex items-center justify-center">
-                <div className="absolute inset-0 bg-[radial-gradient(#00af87_1.5px,transparent_1.5px)] [background-size:20px_20px] opacity-30" />
-                
-                {/* Dynamic Pins on Map */}
-                {filteredListings.map((spot, i) => (
-                  <div
-                    key={spot.id}
-                    style={{
-                      left: `${20 + ((i * 22) % 65)}%`,
-                      top: `${25 + ((i * 18) % 55)}%`,
-                    }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
-                  >
-                    <div className="p-2 rounded-full bg-[#00af87] text-white shadow-xl flex items-center gap-1 font-black text-xs group-hover:scale-125 transition-transform ring-2 ring-white">
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span>${spot.priceMin || 50}</span>
-                    </div>
-
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 hidden group-hover:block z-30 pointer-events-none">
-                      <div className="bg-black/90 text-white text-[11px] font-bold px-3 py-1 rounded-xl shadow-2xl whitespace-nowrap">
-                        {spot.name} • ★ {spot.rating}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-md flex items-center justify-between text-xs">
-                  <span className="font-bold text-gray-900">
-                    Showing coordinates for {filteredListings.length} properties
-                  </span>
+              <div className="relative">
+                <DynamicMapView listings={filteredListings} />
+                <div className="absolute bottom-3 left-3 right-3 z-[1000] flex justify-end">
                   <Button
                     size="sm"
                     onClick={() => setViewMode("list")}
-                    className="rounded-full bg-black text-white text-xs font-bold h-8"
+                    className="rounded-full bg-black text-white text-xs font-bold h-8 shadow-xl"
                   >
                     Back to List View
                   </Button>

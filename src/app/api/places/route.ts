@@ -1,32 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export interface PlaceListing {
-  id: string;
-  type: "HOTEL" | "RESTAURANT" | "ATTRACTION" | "HOLIDAY_HOME";
-  name: string;
-  location: string;
-  city: string;
-  country: string;
-  description: string;
-  image: string;
-  images: string[];
-  rating: number;
-  reviewsCount: number;
-  rankText: string;
-  priceMin: number;
-  priceOriginal: number;
-  starRating: number;
-  lat: number;
-  lng: number;
-  badge?: string;
-  amenities: string[];
-  otas: {
-    name: string;
-    price: number;
-    isLowest?: boolean;
-  }[];
-}
-
 // Fallback high-res Unsplash images by category
 const CATEGORY_DEFAULT_IMAGES = {
   HOTEL: [
@@ -50,6 +23,58 @@ const CATEGORY_DEFAULT_IMAGES = {
     "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
   ],
 };
+
+async function getUnsplashImages(query: string, count: number = 10): Promise<string[]> {
+  const apiKey = process.env.UNSPLASH_ACCESS_KEY;
+  if (!apiKey || apiKey === "your_access_key_here") {
+    return []; // Use fallback if key is missing
+  }
+
+  try {
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Client-ID ${apiKey}`,
+      },
+    });
+    const data = await res.json();
+    if (data.results && data.results.length > 0) {
+      return data.results.map((img: any) => img.urls.regular);
+    }
+  } catch (err) {
+    console.error("Unsplash fetch failed:", err);
+  }
+  return [];
+}
+
+export interface PlaceListing {
+  id: string;
+  type: "HOTEL" | "RESTAURANT" | "ATTRACTION" | "HOLIDAY_HOME";
+  name: string;
+  location: string;
+  city: string;
+  country: string;
+  description: string;
+  image: string;
+  images: string[];
+  rating: number;
+  reviewsCount: number;
+  rankText: string;
+  priceMin?: number;
+  priceOriginal?: number;
+  starRating?: number;
+  lat: number;
+  lng: number;
+  badge?: string;
+  amenities: string[];
+  otas: {
+    name: string;
+    price: number;
+    isLowest?: boolean;
+  }[];
+}
+
+
 
 const GLOBAL_DESTINATIONS_DATA: Record<string, PlaceListing[]> = {
   switzerland: [
@@ -187,125 +212,84 @@ const GLOBAL_DESTINATIONS_DATA: Record<string, PlaceListing[]> = {
   ]
 };
 
-// Fetch real OpenStreetMap Nominatim geo places
-async function fetchNominatimLatLon(query: string) {
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
-    const res = await fetch(url, {
-      headers: { "User-Agent": "TripAdvisorClone/1.0 (contact: info@tripadvisorclone.com)" },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data && data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-        displayName: data[0].display_name,
-        name: data[0].name
-      };
-    }
-  } catch (err) {
-    console.error("Nominatim error:", err);
+// Fetch real points of interest from Google Places API
+async function fetchGooglePlaces(query: string, type: string, cityName: string): Promise<PlaceListing[]> {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+  if (!apiKey || apiKey === "your_access_key_here") {
+    console.error("Missing Google Places API Key");
+    return [];
   }
-  return null;
-}
 
-// Fetch real points of interest from Overpass API
-async function fetchOverpassPOIs(lat: number, lon: number, cityName: string): Promise<PlaceListing[]> {
-  const query = `
-    [out:json];
-    (
-      node["tourism"="hotel"](around:15000, ${lat}, ${lon});
-      node["amenity"="restaurant"](around:15000, ${lat}, ${lon});
-      node["tourism"="attraction"](around:15000, ${lat}, ${lon});
-      node["tourism"="museum"](around:15000, ${lat}, ${lon});
-    );
-    out 30;
-  `;
+  // Map our types to Google Places types
+  let googleType = "tourist_attraction";
+  if (type === "HOTEL") googleType = "lodging";
+  if (type === "RESTAURANT") googleType = "restaurant";
+  if (type === "HOLIDAY_HOME") googleType = "lodging";
+
+  const searchQuery = `${type === "ALL" ? "top places" : type} in ${query}`;
 
   try {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "TripAdvisorClone/1.0"
-      },
-      body: `data=${encodeURIComponent(query)}`,
-      next: { revalidate: 3600 },
-    });
-    
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchQuery)}&type=${googleType}&key=${apiKey}`;
+    const res = await fetch(url, { next: { revalidate: 3600 } });
     if (!res.ok) return [];
-    
     const data = await res.json();
-    if (!data.elements) return [];
+    
+    if (!data.results) return [];
 
-    const results: PlaceListing[] = [];
-    let hCount = 0;
-    let rCount = 0;
-    let aCount = 0;
+    // Fetch dynamic Unsplash images for fallback
+    const unsplashCityImages = await getUnsplashImages(cityName + " " + type, 15);
 
-    for (const node of data.elements) {
-      if (!node.tags || (!node.tags["name:en"] && !node.tags.name)) continue;
-
-      const name = node.tags["name:en"] || node.tags.name;
-      let type: PlaceListing["type"] = "ATTRACTION";
-      let basePrice = 50;
-      let amenities = ["Free WiFi"];
-
-      if (node.tags.tourism === "hotel") {
-        type = "HOTEL";
-        basePrice = 120 + (Math.random() * 200);
-        amenities = ["Free WiFi", "Air Conditioning", "Free Breakfast"];
-        hCount++;
-        if (hCount > 5) continue;
-      } else if (node.tags.amenity === "restaurant") {
-        type = "RESTAURANT";
-        basePrice = 30 + (Math.random() * 80);
-        amenities = ["Outdoor Seating", "Vegetarian Friendly"];
-        rCount++;
-        if (rCount > 5) continue;
+    const results: PlaceListing[] = data.results.map((place: any, index: number) => {
+      let image = "";
+      
+      // Use Google Places Photos if available
+      if (place.photos && place.photos.length > 0) {
+        image = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${place.photos[0].photo_reference}&key=${apiKey}`;
+      } else if (unsplashCityImages.length > 0) {
+        // Fallback to Unsplash
+        image = unsplashCityImages[index % unsplashCityImages.length];
       } else {
-        type = "ATTRACTION";
-        basePrice = 15 + (Math.random() * 40);
-        amenities = ["Skip The Line", "Guided Tour"];
-        aCount++;
-        if (aCount > 5) continue;
+        // Fallback to defaults
+        const defaultImgs = CATEGORY_DEFAULT_IMAGES[type === "ALL" ? "ATTRACTION" : type as keyof typeof CATEGORY_DEFAULT_IMAGES] || CATEGORY_DEFAULT_IMAGES.ATTRACTION;
+        image = defaultImgs[index % defaultImgs.length];
       }
 
-      const images = CATEGORY_DEFAULT_IMAGES[type];
-      const randomImg = images[Math.floor(Math.random() * images.length)];
+      let listingType: PlaceListing["type"] = "ATTRACTION";
+      if (place.types.includes("lodging")) listingType = "HOTEL";
+      if (place.types.includes("restaurant")) listingType = "RESTAURANT";
 
-      results.push({
-        id: `osm-${node.id}`,
-        type,
-        name,
-        location: `${name}, ${cityName}`,
+      let basePrice = listingType === "HOTEL" ? 120 + Math.random() * 200 : 30 + Math.random() * 80;
+
+      return {
+        id: `google-${place.place_id}`,
+        type: listingType,
+        name: place.name,
+        location: place.formatted_address || `${place.name}, ${cityName}`,
         city: cityName,
         country: "Global",
-        description: `Experience the real ${name} in ${cityName}. Enjoy highly-rated hospitality, verified location data, and exclusive deals.`,
-        image: randomImg,
-        images: [randomImg],
-        rating: Number((4.0 + Math.random() * 1.0).toFixed(1)),
-        reviewsCount: Math.floor(Math.random() * 2000) + 100,
-        rankText: `#${Math.floor(Math.random() * 15) + 1} Best in ${cityName}`,
+        description: `Experience the real ${place.name} in ${cityName}. Enjoy highly-rated hospitality and exclusive deals.`,
+        image,
+        images: [image],
+        rating: place.rating || Number((4.0 + Math.random() * 1.0).toFixed(1)),
+        reviewsCount: place.user_ratings_total || Math.floor(Math.random() * 2000) + 100,
+        rankText: `#${index + 1} Best in ${cityName}`,
         priceMin: Math.round(basePrice),
         priceOriginal: Math.round(basePrice * 1.2),
-        starRating: parseInt(node.tags.stars || "4"),
-        lat: node.lat,
-        lng: node.lon,
-        badge: Math.random() > 0.8 ? "Bestseller" : undefined,
-        amenities,
+        starRating: place.rating ? Math.round(place.rating) : 4,
+        lat: place.geometry?.location?.lat || 0,
+        lng: place.geometry?.location?.lng || 0,
+        badge: index < 3 ? "Bestseller" : undefined,
+        amenities: listingType === "HOTEL" ? ["Free WiFi", "Air Conditioning", "Breakfast"] : ["Top Rated"],
         otas: [
           { name: "Tripadvisor Direct", price: Math.round(basePrice), isLowest: true },
           { name: "Booking.com", price: Math.round(basePrice + 15) },
         ],
-      });
-    }
+      };
+    });
 
-    return results;
+    return results.slice(0, 10); // Return top 10 results
   } catch (err) {
-    console.error("Overpass error:", err);
+    console.error("Google Places error:", err);
     return [];
   }
 }
@@ -326,14 +310,11 @@ export async function GET(request: NextRequest) {
       results = Object.values(GLOBAL_DESTINATIONS_DATA).flat();
     }
 
-    // 2. Fetch REAL Places from Overpass API dynamically
+    // 2. Fetch REAL Places from Google Places API dynamically
     if (query && results.length < 5) {
-      const geoInfo = await fetchNominatimLatLon(query);
-      if (geoInfo) {
-        const cityName = geoInfo.name;
-        const overpassPlaces = await fetchOverpassPOIs(geoInfo.lat, geoInfo.lon, cityName);
-        results = [...results, ...overpassPlaces];
-      }
+      // Pass 'query' directly as cityName for the search context
+      const googlePlaces = await fetchGooglePlaces(query, type, query);
+      results = [...results, ...googlePlaces];
     }
 
   } catch (err) {
@@ -352,7 +333,7 @@ export async function GET(request: NextRequest) {
     query: query || "All",
     type,
     total: finalData.length,
-    source: "Real Overpass API & Nominatim Data",
+    source: "Real Google Places API",
     data: finalData,
   });
 }
