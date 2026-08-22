@@ -20,16 +20,27 @@ import {
   Compass,
   Bookmark,
   ChevronRight,
-  Filter
+  Filter,
+  Settings,
+  User,
+  Mail,
+  Shield,
+  Trash2,
+  AlertTriangle,
+  X,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const PROFILE_DATA = {
+const INITIAL_PROFILE_DATA = {
   name: "Elena Rostova",
   handle: "@elena_travels",
+  email: "elena@atlasguide.com",
   avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
   cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
   location: "London, United Kingdom",
+  language: "English (US)",
+  currency: "USD ($)",
   joined: "March 2021",
   bio: "Luxury resort enthusiast, avid scuba diver & Michelin culinary explorer. Over 18 countries documented with unbiased reviews and traveler tips.",
   stats: {
@@ -53,10 +64,37 @@ const PROFILE_DATA = {
     { country: "Japan", city: "Tokyo & Kyoto", flag: "🇯🇵", year: "2025" },
     { country: "France", city: "Paris & Nice", flag: "🇫🇷", year: "2025" },
     { country: "Italy", city: "Rome & Florence", flag: "🇮🇹", year: "2024" },
-    { country: "United States", city: "New York & Hawaii", flag: "🇺🇸", year: "2024" },
-    { country: "Spain", city: "Barcelona & Madrid", flag: "🇪🇸", year: "2023" },
-    { country: "Greece", city: "Santorini & Athens", flag: "🇬🇷", year: "2023" },
-    { country: "Maldives", city: "North Malé Atoll", flag: "🇲🇻", year: "2023" },
+    { country: "India", city: "Goa & Mumbai", flag: "🇮🇳", year: "2024" },
+    { country: "Switzerland", city: "Interlaken & Lauterbrunnen", flag: "🇨🇭", year: "2023" },
+  ],
+  savedDestinations: [
+    {
+      id: "sav-1",
+      name: "The St. Regis Bali Resort",
+      category: "Hotel",
+      location: "Nusa Dua, Bali",
+      rating: 4.95,
+      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      price: "$590/night"
+    },
+    {
+      id: "sav-2",
+      name: "Shangri-La Paris (Eiffel Tower View)",
+      category: "Hotel",
+      location: "Paris, France",
+      rating: 4.9,
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      price: "$1,150/night"
+    },
+    {
+      id: "sav-3",
+      name: "Jungfraujoch - Top of Europe Glacier Tour",
+      category: "Attraction",
+      location: "Interlaken, Switzerland",
+      rating: 4.92,
+      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      price: "$185/ticket"
+    }
   ],
   reviews: [
     {
@@ -71,7 +109,6 @@ const PROFILE_DATA = {
       helpfulVotes: 48,
       photos: [
         "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       ],
     },
     {
@@ -82,448 +119,425 @@ const PROFILE_DATA = {
       rating: 5,
       date: "June 2026",
       title: "Sublime gastronomic journey near the Champs-Élysées",
-      body: "Chef Jérôme Banctel crafts pure art. The pigeon and artichoke dish accompanied by vintage Burgundy wine was the highlight of our Europe trip. Service is whisper-quiet yet attentive.",
+      body: "Chef Jérôme Banctel crafts pure art. The pigeon and artichoke dish accompanied by vintage Burgundy wine was the highlight of our Europe trip.",
       helpfulVotes: 64,
       photos: [
         "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
       ],
-    },
-    {
-      id: "pr-3",
-      place: "Fushimi Inari Taisha Sunrise Trek",
-      category: "Attraction",
-      location: "Kyoto, Japan",
-      rating: 5,
-      date: "March 2026",
-      title: "Hike early at 6:30 AM before tourist crowds arrive!",
-      body: "Walking through thousands of vermilion torii gates with morning mountain mist is hypnotic. Take the full 2-hour summit trail for panoramic views of Kyoto valley.",
-      helpfulVotes: 92,
-      photos: [
-        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      ],
-    },
-  ],
-  collections: [
-    {
-      id: "col-1",
-      title: "Bali Luxury Stays & Villas 2026",
-      itemCount: 8,
-      image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "col-2",
-      title: "Parisian Michelin Star Hotspots",
-      itemCount: 12,
-      image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "col-3",
-      title: "Kyoto Heritage Shrines & Gardens",
-      itemCount: 6,
-      image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-  ],
+    }
+  ]
 };
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState<"reviews" | "map" | "badges" | "collections">("reviews");
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [reviewFilter, setReviewFilter] = useState<string>("ALL");
-  const [helpfulLikes, setHelpfulLikes] = useState<Record<string, number>>({});
+  const [profile, setProfile] = useState(INITIAL_PROFILE_DATA);
+  const [activeTab, setActiveTab] = useState<"overview" | "saved" | "settings">("overview");
 
-  const toggleHelpful = (id: string, initialVotes: number) => {
-    setHelpfulLikes((prev) => ({
-      ...prev,
-      [id]: (prev[id] ?? initialVotes) + 1,
-    }));
+  // Form edit states
+  const [editName, setEditName] = useState(profile.name);
+  const [editHandle, setEditHandle] = useState(profile.handle);
+  const [editEmail, setEditEmail] = useState(profile.email);
+  const [editBio, setEditBio] = useState(profile.bio);
+  const [editLocation, setEditLocation] = useState(profile.location);
+  const [editLanguage, setEditLanguage] = useState(profile.language);
+  const [editCurrency, setEditCurrency] = useState(profile.currency);
+  const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const handleSaveSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfile({
+      ...profile,
+      name: editName,
+      handle: editHandle,
+      email: editEmail,
+      bio: editBio,
+      location: editLocation,
+      language: editLanguage,
+      currency: editCurrency
+    });
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
   };
 
-  const filteredReviews = PROFILE_DATA.reviews.filter((r) =>
-    reviewFilter === "ALL" ? true : r.category.toUpperCase() === reviewFilter
-  );
+  const handleRemoveSaved = (id: string) => {
+    setProfile({
+      ...profile,
+      savedDestinations: profile.savedDestinations.filter((d) => d.id !== id)
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pb-16">
-      {/* Cover Banner */}
-      <div className="relative h-48 sm:h-64 lg:h-72 w-full bg-gray-900">
+    <div className="min-h-screen bg-[#fbf9f5] pb-24 text-gray-900">
+      {/* Cover Photo */}
+      <div className="relative h-60 sm:h-80 w-full bg-gray-900">
         <Image
-          src={PROFILE_DATA.cover}
+          src={profile.cover}
           alt="Profile Cover"
           fill
-          priority
-          className="object-cover opacity-85"
+          className="object-cover opacity-75"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       </div>
 
-      {/* Main Profile Container */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl -mt-16 sm:-mt-20 relative z-10">
-        {/* User Card Header */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-md space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
-            {/* Avatar & Basic Info */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-3xl border-4 border-white shadow-xl overflow-hidden bg-gray-100 shrink-0">
-                <Image
-                  src={PROFILE_DATA.avatar}
-                  alt={PROFILE_DATA.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-gray-950">
-                    {PROFILE_DATA.name}
-                  </h1>
-                  <span className="p-1 rounded-full bg-[#00af87] text-white" title="Verified Top Contributor">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500 font-semibold mt-0.5 flex flex-wrap items-center gap-2">
-                  <span>{PROFILE_DATA.handle}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-[#00af87]" />
-                    {PROFILE_DATA.location}
-                  </span>
-                  <span>•</span>
-                  <span>Joined {PROFILE_DATA.joined}</span>
-                </div>
-              </div>
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-10 space-y-6">
+        {/* Profile Card Header */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-gray-200 shrink-0">
+              <Image
+                src={profile.avatar}
+                alt={profile.name}
+                fill
+                className="object-cover"
+              />
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2 self-stretch sm:self-auto">
-              <Button
-                onClick={() => setIsFollowing(!isFollowing)}
-                className={`flex-1 sm:flex-initial rounded-full font-extrabold text-xs px-6 h-10 transition-all ${
-                  isFollowing
-                    ? "bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300"
-                    : "bg-[#00af87] hover:bg-[#009673] text-white shadow-sm"
-                }`}
-              >
-                {isFollowing ? "Following" : "+ Follow"}
-              </Button>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: PROFILE_DATA.name, url: window.location.href });
-                  } else {
-                    alert("Profile link copied!");
-                  }
-                }}
-                className="rounded-full border-gray-300 h-10 w-10"
-              >
-                <Share2 className="h-4 w-4 text-gray-700" />
-              </Button>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-900">{profile.name}</h1>
+                <CheckCircle2 className="w-5 h-5 text-[#00af87] shrink-0" />
+              </div>
+              <p className="text-xs text-gray-500 font-bold">{profile.handle} &bull; {profile.location}</p>
+              <p className="text-xs text-gray-600 max-w-xl font-medium pt-1">{profile.bio}</p>
             </div>
           </div>
 
-          {/* User Bio */}
-          <p className="text-sm text-gray-700 leading-relaxed font-medium">
-            {PROFILE_DATA.bio}
-          </p>
+          {/* Sub Navigation Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 justify-center">
+            <Button
+              size="sm"
+              onClick={() => setActiveTab("overview")}
+              className={`rounded-2xl text-xs font-bold h-10 px-4 ${
+                activeTab === "overview" ? "bg-[#00af87] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <User className="w-3.5 h-3.5 mr-1.5" />
+              <span>Overview & Reviews</span>
+            </Button>
 
-          {/* Key Traveler Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-4 border-t border-gray-100 text-center">
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-gray-900 block">
-                {PROFILE_DATA.stats.countriesVisited}
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Countries</span>
-            </div>
+            <Button
+              size="sm"
+              onClick={() => setActiveTab("saved")}
+              className={`rounded-2xl text-xs font-bold h-10 px-4 ${
+                activeTab === "saved" ? "bg-[#00af87] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Bookmark className="w-3.5 h-3.5 mr-1.5" />
+              <span>Favorites ({profile.savedDestinations.length})</span>
+            </Button>
 
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-gray-900 block">
-                {PROFILE_DATA.stats.citiesExplored}
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Cities</span>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-gray-900 block">
-                {PROFILE_DATA.stats.reviewsCount}
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Reviews</span>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-[#00af87] block">
-                {(PROFILE_DATA.stats.helpfulVotes / 1000).toFixed(0)}k
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Helpful Votes</span>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-gray-900 block">
-                {PROFILE_DATA.stats.followers.toLocaleString()}
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Followers</span>
-            </div>
-
-            <div className="p-3 bg-gray-50 rounded-2xl">
-              <span className="text-lg sm:text-xl font-black text-gray-900 block">
-                {PROFILE_DATA.stats.photosUploaded}
-              </span>
-              <span className="text-[11px] font-bold text-gray-500 uppercase">Photos</span>
-            </div>
+            <Button
+              size="sm"
+              onClick={() => setActiveTab("settings")}
+              className={`rounded-2xl text-xs font-bold h-10 px-4 ${
+                activeTab === "settings" ? "bg-[#00af87] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5 mr-1.5" />
+              <span>Account Settings</span>
+            </Button>
           </div>
         </div>
 
-        {/* Profile Navigation Tabs */}
-        <div className="mt-8 flex items-center gap-2 border-b border-gray-200 overflow-x-auto no-scrollbar pb-1">
-          {[
-            { id: "reviews", label: `Reviews (${PROFILE_DATA.stats.reviewsCount})`, icon: MessageSquare },
-            { id: "map", label: `Travel Map (${PROFILE_DATA.stats.countriesVisited} Countries)`, icon: Globe2 },
-            { id: "badges", label: `Badges (${PROFILE_DATA.badges.length})`, icon: Award },
-            { id: "collections", label: `Trips & Lists (${PROFILE_DATA.collections.length})`, icon: Bookmark },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-colors ${
-                  isActive
-                    ? "bg-black text-white shadow-sm"
-                    : "bg-white text-gray-600 hover:text-black border border-gray-200"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Stats & Badges */}
+            <div className="space-y-6">
+              {/* Badges Card */}
+              <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-2xs space-y-4">
+                <h3 className="font-black text-sm text-gray-900 flex items-center gap-2">
+                  <Award className="w-4 h-4 text-amber-500" />
+                  <span>Traveler Badges & Status</span>
+                </h3>
+                <div className="space-y-2.5">
+                  {profile.badges.map((b) => (
+                    <div key={b.id} className={`p-3 rounded-2xl border flex items-center gap-3 ${b.color}`}>
+                      <span className="text-xl">{b.icon}</span>
+                      <div>
+                        <h4 className="font-black text-xs">{b.title}</h4>
+                        <p className="text-[10px] opacity-80">{b.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-        {/* Tab 1: Review Feeds */}
-        {activeTab === "reviews" && (
-          <div className="mt-6 space-y-6">
-            {/* Category Filter Chips */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-              {["ALL", "HOTEL", "RESTAURANT", "ATTRACTION"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setReviewFilter(cat)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                    reviewFilter === cat
-                      ? "bg-[#00af87] text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                  }`}
-                >
-                  {cat === "ALL" ? "All Reviews" : cat === "HOTEL" ? "Hotels" : cat === "RESTAURANT" ? "Dining" : "Attractions"}
-                </button>
+              {/* Visited Countries */}
+              <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-2xs space-y-3">
+                <h3 className="font-black text-sm text-gray-900 flex items-center gap-2">
+                  <Globe2 className="w-4 h-4 text-[#00af87]" />
+                  <span>Passport Stamp History</span>
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {profile.visitedPlaces.map((p, i) => (
+                    <span key={i} className="bg-gray-100 text-gray-800 text-xs font-bold px-3 py-1 rounded-xl flex items-center gap-1.5">
+                      <span>{p.flag}</span>
+                      <span>{p.city}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Published Reviews */}
+            <div className="lg:col-span-2 space-y-4">
+              <h2 className="text-xl font-black text-gray-900">Verified Traveler Reviews ({profile.reviews.length})</h2>
+              {profile.reviews.map((r) => (
+                <div key={r.id} className="bg-white rounded-3xl p-6 border border-gray-200 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-[#00af87] uppercase">{r.category}</span>
+                      <h4 className="font-black text-base text-gray-900">{r.place}</h4>
+                      <p className="text-xs text-gray-400 font-medium">{r.location} &bull; {r.date}</p>
+                    </div>
+                    <div className="flex text-amber-400">
+                      {Array.from({ length: r.rating }).map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                  <h5 className="font-bold text-sm text-gray-800">"{r.title}"</h5>
+                  <p className="text-xs text-gray-600 leading-relaxed">{r.body}</p>
+                </div>
               ))}
             </div>
+          </div>
+        )}
 
-            {/* Reviews Cards List */}
-            <div className="space-y-5">
-              {filteredReviews.map((rev) => {
-                const currentHelpful = helpfulLikes[rev.id] ?? rev.helpfulVotes;
+        {/* TAB 2: SAVED / FAVORITES (Feature #12) */}
+        {activeTab === "saved" && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-6">
+            <div>
+              <h2 className="text-xl font-black text-gray-900">Saved Stays & Experiences</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Places you bookmarked to include in your next trip</p>
+            </div>
 
-                return (
-                  <div
-                    key={rev.id}
-                    className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-7 shadow-xs hover:shadow-md transition-shadow space-y-4"
-                  >
-                    {/* Place and Rating Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
-                      <div>
-                        <span className="text-[10px] uppercase font-bold text-[#00af87] tracking-wider block">
-                          {rev.category} Review
-                        </span>
-                        <h3 className="text-lg font-black text-gray-900 mt-0.5">
-                          {rev.place}
-                        </h3>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <MapPin className="h-3 w-3 text-gray-400" />
-                          <span>{rev.location}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 self-start sm:self-auto">
-                        <div className="flex text-[#00af87] gap-0.5">
-                          {[...Array(rev.rating)].map((_, i) => (
-                            <span key={i} className="h-3 w-3 rounded-full bg-[#00af87] inline-block" />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-400 font-semibold">{rev.date}</span>
-                      </div>
-                    </div>
-
-                    {/* Review Title & Body */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {profile.savedDestinations.map((fav) => (
+                <div key={fav.id} className="rounded-3xl border border-gray-200 overflow-hidden bg-gray-50/50 flex flex-col justify-between">
+                  <div className="relative h-40 w-full bg-gray-200">
+                    <Image src={fav.image} alt={fav.name} fill className="object-cover" />
+                  </div>
+                  <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
                     <div>
-                      <h4 className="text-base font-bold text-gray-900 mb-1">
-                        "{rev.title}"
-                      </h4>
-                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                        {rev.body}
-                      </p>
+                      <span className="text-[10px] font-bold text-[#00af87] uppercase">{fav.category}</span>
+                      <h4 className="font-black text-sm text-gray-900 mt-0.5">{fav.name}</h4>
+                      <p className="text-xs text-gray-500">{fav.location}</p>
                     </div>
-
-                    {/* Photos Attached */}
-                    {rev.photos && rev.photos.length > 0 && (
-                      <div className="flex gap-3 overflow-x-auto pb-1 pt-1">
-                        {rev.photos.map((photo, i) => (
-                          <div
-                            key={i}
-                            className="relative h-32 w-48 rounded-2xl overflow-hidden bg-gray-100 shrink-0 border border-gray-200"
-                          >
-                            <Image src={photo} alt="Review photo" fill className="object-cover" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Helpful Votes Count */}
-                    <div className="pt-2 flex items-center justify-between text-xs text-gray-500">
-                      <span>Written by verified traveler</span>
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                      <span className="text-xs font-black text-gray-900">{fav.price}</span>
                       <button
-                        onClick={() => toggleHelpful(rev.id, rev.helpfulVotes)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-[#00af87] hover:bg-emerald-100 font-bold transition-colors"
+                        onClick={() => handleRemoveSaved(fav.id)}
+                        className="text-xs text-rose-600 font-bold hover:underline"
                       >
-                        <ThumbsUp className="h-3.5 w-3.5" />
-                        <span>Helpful ({currentHelpful})</span>
+                        Remove
                       </button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 2: Personalized Travel Map */}
-        {activeTab === "map" && (
-          <div className="mt-6 bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 space-y-6 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
-              <div>
-                <h3 className="text-xl font-black text-gray-900">
-                  Elena's Interactive World Travel Map
-                </h3>
-                <p className="text-xs text-gray-500 font-medium mt-0.5">
-                  18 / 195 Countries Visited • 9.2% of the Globe Explored
-                </p>
-              </div>
-
-              <div className="px-3.5 py-1.5 rounded-full bg-emerald-50 text-[#00af87] text-xs font-bold self-start sm:self-auto">
-                🗺️ Global Traveler Level 6
-              </div>
-            </div>
-
-            {/* Travel Map Graphic Visualization */}
-            <div className="relative h-72 sm:h-96 rounded-2xl overflow-hidden bg-[#24150b] border border-amber-900/40 shadow-inner">
-              <Image
-                src="/vintage-map-bg.jpg"
-                alt="Personalized World Map"
-                fill
-                className="object-cover opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1b0d06]/80 via-transparent" />
-
-              {/* Pin Beacons on Visited Countries */}
-              {[
-                { name: "Bali 🇮🇩", top: "60%", left: "78%" },
-                { name: "Tokyo 🇯🇵", top: "38%", left: "83%" },
-                { name: "Paris 🇫🇷", top: "33%", left: "49%" },
-                { name: "Rome 🇮🇹", top: "37%", left: "52%" },
-                { name: "New York 🇺🇸", top: "37%", left: "27%" },
-                { name: "Santorini 🇬🇷", top: "40%", left: "54%" },
-                { name: "Maldives 🇲🇻", top: "54%", left: "68%" },
-              ].map((pin) => (
-                <div
-                  key={pin.name}
-                  style={{ top: pin.top, left: pin.left }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                >
-                  <div className="h-4 w-4 rounded-full bg-[#00eb5b] border-2 border-white shadow-lg animate-pulse" />
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 hidden group-hover:block bg-black/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg whitespace-nowrap z-20">
-                    {pin.name}
-                  </div>
                 </div>
               ))}
-
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-md flex items-center justify-between text-xs">
-                <span className="font-bold text-gray-900">8 Regions Pinned & Active</span>
-                <span className="text-[#00af87] font-extrabold">+ Add New Trip Pin</span>
-              </div>
-            </div>
-
-            {/* Visited Country Badges List */}
-            <div className="space-y-3">
-              <h4 className="font-extrabold text-sm text-gray-900">Visited Destinations:</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {PROFILE_DATA.visitedPlaces.map((place) => (
-                  <div
-                    key={place.country}
-                    className="p-3 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{place.flag}</span>
-                      <div>
-                        <span className="font-bold text-xs text-gray-900 block">{place.country}</span>
-                        <span className="text-[10px] text-gray-500">{place.city}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-gray-400">{place.year}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         )}
 
-        {/* Tab 3: Badges & Achievements */}
-        {activeTab === "badges" && (
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PROFILE_DATA.badges.map((badge) => (
-              <div
-                key={badge.id}
-                className={`p-5 rounded-3xl border ${badge.color} shadow-xs flex items-start gap-3.5`}
-              >
-                <div className="text-3xl">{badge.icon}</div>
+        {/* TAB 3: ACCOUNT SETTINGS (Feature #12) */}
+        {activeTab === "settings" && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-8">
+            <div>
+              <h2 className="text-xl font-black text-gray-900">Account & Profile Settings</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Manage your personal info, language, currency, and account privacy</p>
+            </div>
+
+            {savedSuccess && (
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2 text-emerald-800 text-xs font-bold animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 text-[#00af87]" />
+                <span>Your profile settings have been updated successfully!</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveSettings} className="space-y-6">
+              {/* Personal Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-black text-sm">{badge.title}</h4>
-                  <p className="text-xs opacity-80 mt-1 leading-snug">{badge.desc}</p>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Full Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                    required
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
 
-        {/* Tab 4: Saved Lists & Collections */}
-        {activeTab === "collections" && (
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {PROFILE_DATA.collections.map((col) => (
-              <div
-                key={col.id}
-                className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col justify-between"
-              >
-                <div className="relative h-44 w-full bg-gray-100">
-                  <Image src={col.image} alt={col.title} fill className="object-cover" />
-                  <div className="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-xs text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-                    {col.itemCount} places saved
-                  </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Username / Handle</label>
+                  <input
+                    type="text"
+                    value={editHandle}
+                    onChange={(e) => setEditHandle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                    required
+                  />
                 </div>
-                <div className="p-4 space-y-2">
-                  <h4 className="font-black text-sm text-gray-900 leading-snug">{col.title}</h4>
-                  <Link href="/trips">
-                    <Button className="w-full rounded-full bg-[#00af87] hover:bg-[#009673] text-white text-xs font-bold h-9">
-                      View Collection &rarr;
-                    </Button>
-                  </Link>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Email Address</label>
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Location</label>
+                  <input
+                    type="text"
+                    value={editLocation}
+                    onChange={(e) => setEditLocation(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                  />
                 </div>
               </div>
-            ))}
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">Traveler Bio</label>
+                <textarea
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  rows={3}
+                  className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87]"
+                />
+              </div>
+
+              {/* Preferences */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Language Preference</label>
+                  <select
+                    value={editLanguage}
+                    onChange={(e) => setEditLanguage(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] cursor-pointer"
+                  >
+                    <option value="English (US)">🇺🇸 English (US)</option>
+                    <option value="French (Français)">🇫🇷 Français</option>
+                    <option value="Spanish (Español)">🇪🇸 Español</option>
+                    <option value="Japanese (日本語)">🇯🇵 日本語</option>
+                    <option value="Hindi (हिंदी)">🇮🇳 हिंदी</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">Display Currency</label>
+                  <select
+                    value={editCurrency}
+                    onChange={(e) => setEditCurrency(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00af87] cursor-pointer"
+                  >
+                    <option value="USD ($)">USD ($) - US Dollar</option>
+                    <option value="EUR (€)">EUR (€) - Euro</option>
+                    <option value="INR (₹)">INR (₹) - Indian Rupee</option>
+                    <option value="GBP (£)">GBP (£) - British Pound</option>
+                    <option value="JPY (¥)">JPY (¥) - Japanese Yen</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="submit"
+                  className="bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-2xl h-10 px-6 shadow-md"
+                >
+                  Save Profile Settings
+                </Button>
+              </div>
+            </form>
+
+            {/* Danger Zone: Delete Account */}
+            <div className="pt-8 border-t border-rose-100">
+              <div className="p-6 bg-rose-50/70 border border-rose-200 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h4 className="font-black text-sm text-rose-900 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    <span>Danger Zone: Delete Traveler Account</span>
+                  </h4>
+                  <p className="text-xs text-rose-700 mt-1">
+                    Permanently delete your profile, saved trips, review badges, and custom itineraries.
+                  </p>
+                </div>
+
+                <Button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-2xl h-9 px-4 shrink-0"
+                >
+                  Delete Account
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Delete Account Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-200 relative animate-in fade-in zoom-in-95 duration-200 space-y-4">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+              <Trash2 className="w-5 h-5" />
+            </div>
+
+            <h3 className="text-xl font-black text-gray-900">Are you absolutely sure?</h3>
+            <p className="text-xs text-gray-500">
+              This action cannot be undone. To confirm, type <strong>DELETE</strong> in the box below:
+            </p>
+
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              className="w-full px-3.5 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500"
+            />
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 rounded-2xl text-xs font-bold h-10"
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={deleteConfirmText !== "DELETE"}
+                onClick={() => {
+                  setIsDeleted(true);
+                  setTimeout(() => {
+                    window.location.href = "/";
+                  }, 1200);
+                }}
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-2xl h-10"
+              >
+                {isDeleted ? "Account Deleted..." : "Confirm Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -444,9 +444,15 @@ export function Header() {
               </Button>
             </Link>
 
-            {/* Profile Avatar / Link */}
+            {/* Sign In & Profile */}
+            <Link href="/login" className="hidden md:flex">
+              <Button variant="outline" size="sm" className="rounded-full font-bold text-xs border-gray-300 hover:border-[#00af87] hover:text-[#00af87] h-9 px-3.5">
+                Sign In
+              </Button>
+            </Link>
+
             <Link href="/profile" className="flex items-center">
-              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-[#00af87] overflow-hidden hover:scale-105 transition-transform">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 border-[#00af87] overflow-hidden hover:scale-105 transition-transform shadow-xs">
                 <Image
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
                   alt="User Profile"
@@ -578,15 +584,15 @@ export function Header() {
                 </Link>
 
                 <Link
-                  href="/review"
+                  href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between px-3.5 py-3 rounded-xl text-gray-800 hover:bg-gray-100 font-semibold text-sm transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
-                      <PenLine className="h-4 w-4" />
+                    <div className="p-2 rounded-lg bg-teal-50 text-[#00af87]">
+                      <User className="h-4 w-4" />
                     </div>
-                    <span>Write a Review</span>
+                    <span>Sign In / Create Account</span>
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400" />
                 </Link>
