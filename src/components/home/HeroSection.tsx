@@ -1,43 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Search,
-  Home,
+  Bed,
+  Ticket,
   Utensils,
   Plane,
-  Ticket,
-  Bed,
+  Home,
+  Compass,
   Calendar,
   Users,
-  MapPin,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Clock
 } from "lucide-react";
 import { Button } from "../ui/button";
 
+const STATIC_HERO = {
+  title: "Where to next?",
+  subtitle: "Explore the world's most incredible destinations with real local insights",
+  image: "/images/world-map.jpg",
+};
+
 const TABS = [
-  { id: "all", label: "Search All", icon: Home, type: "ALL" },
-  { id: "hotels", label: "Hotels", icon: Bed, type: "HOTEL" },
-  { id: "things-to-do", label: "Things to Do", icon: Ticket, type: "ATTRACTION" },
-  { id: "restaurants", label: "Restaurants", icon: Utensils, type: "RESTAURANT" },
+  { id: "all", label: "Search All", icon: Compass, type: "ALL" },
+  { id: "hotels", label: "Hotels & Stays", icon: Bed, type: "HOTEL" },
+  { id: "things-to-do", label: "Experiences", icon: Ticket, type: "ATTRACTION" },
+  { id: "restaurants", label: "Dining", icon: Utensils, type: "RESTAURANT" },
   { id: "flights", label: "Flights", icon: Plane, type: "FLIGHT" },
-  { id: "holiday-homes", label: "Holiday Homes", icon: Home, type: "HOLIDAY_HOME" },
+  { id: "holiday-homes", label: "Villas & Homes", icon: Home, type: "HOLIDAY_HOME" },
 ];
 
 const TRENDING_TAGS = [
-  { label: "Goa Beach Resorts", type: "HOTEL", query: "Goa" },
-  { label: "Paris Louvre Tour", type: "ATTRACTION", query: "Paris" },
-  { label: "Tokyo Sushi Spots", type: "RESTAURANT", query: "Tokyo" },
+  { label: "Swiss Chalet Rentals", type: "HOLIDAY_HOME", query: "Switzerland" },
+  { label: "Scottish Highlands Tour", type: "ATTRACTION", query: "Highlands" },
+  { label: "Amalfi Coast Stays", type: "HOTEL", query: "Amalfi" },
   { label: "Bali Luxury Villas", type: "HOLIDAY_HOME", query: "Bali" },
-  { label: "New York Rooftops", type: "RESTAURANT", query: "New York" },
+  { label: "Tokyo Michelin Dining", type: "RESTAURANT", query: "Tokyo" },
 ];
 
 export function HeroSection() {
   const [activeTab, setActiveTab] = useState("all");
   const [location, setLocation] = useState("");
-  const [dates, setDates] = useState("Aug 24 - Aug 28");
+  const [dates, setDates] = useState("Aug 25 – Aug 30");
   const [guests, setGuests] = useState("2 adults, 1 room");
   const router = useRouter();
 
@@ -55,24 +67,45 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative w-full pt-8 pb-12 sm:pt-12 sm:pb-16 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
-      <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8">
-        {/* Hero Title & Subtitle */}
-        <div className="text-center space-y-2 max-w-3xl">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 text-[#00af87] text-xs sm:text-sm font-bold tracking-wide uppercase mb-1">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Discover your next adventure</span>
-          </div>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-gray-950 leading-[1.08]">
-            Where to next?
+    <section
+      className="relative w-full overflow-hidden min-h-[560px] sm:min-h-[640px] lg:min-h-[700px] flex items-center justify-center bg-background text-white"
+    >
+      {/* Background Static Image */}
+      <div className="absolute inset-0 z-0 mask-image-b-fade">
+        <Image
+          src={STATIC_HERO.image}
+          alt={STATIC_HERO.title}
+          fill
+          quality={100}
+          unoptimized={true}
+          priority={true}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Light Overlay for Image Vibrancy + Text Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/50" />
+        <div className="absolute inset-0 [background:radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.4)_100%)]" />
+        
+        {/* Bottom Fade out gradient to match the new cream background */}
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+      </div>
+
+      {/* Main Foreground Content */}
+      <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-5xl text-center flex flex-col items-center justify-center space-y-6">
+        
+        {/* Static Slide Headline */}
+        <div className="space-y-3 max-w-3xl">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] leading-[1.06]">
+            {STATIC_HERO.title}
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 font-medium max-w-xl mx-auto">
-            Compare stays, find award-winning restaurants, and discover unforgettable experiences.
+
+          <p className="text-sm sm:text-base md:text-lg text-gray-100 font-medium max-w-2xl mx-auto drop-shadow-md leading-relaxed">
+            {STATIC_HERO.subtitle}
           </p>
         </div>
 
-        {/* Tab Navigation with responsive horizontal scroll */}
-        <div className="w-full max-w-4xl">
+        {/* Category Tabs */}
+        <div className="w-full max-w-4xl pt-2">
           <div className="flex overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center gap-2 no-scrollbar scroll-smooth">
             {TABS.map((tab) => {
               const Icon = tab.icon;
@@ -81,31 +114,31 @@ export function HeroSection() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-150 cursor-pointer select-none shadow-xs shrink-0 ${
+                  className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer select-none shrink-0 backdrop-blur-md shadow-md ${
                     isActive
-                      ? "bg-black text-white shadow-md scale-102"
-                      : "bg-white text-gray-700 hover:bg-gray-100 hover:text-black border border-gray-200/80"
+                      ? "bg-[#00af87] text-white border border-[#00eb5b]/50 shadow-lg scale-102 ring-2 ring-[#00eb5b]/30"
+                      : "bg-black/60 text-gray-200 hover:bg-black/80 hover:text-white border border-white/15"
                   }`}
                 >
-                  <Icon className={`h-4 w-4 ${isActive ? "text-[#00eb5b]" : "text-gray-500"}`} />
+                  <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-[#00eb5b]"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Search Box Card */}
+          {/* Glassmorphic Search Form Card */}
           <form
             onSubmit={handleSearch}
-            className="mt-4 bg-white rounded-2xl sm:rounded-full shadow-lg hover:shadow-xl transition-shadow border border-gray-200 p-2 sm:p-2.5"
+            className="mt-4 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-full shadow-2xl border border-white/60 p-2 sm:p-2.5 transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
           >
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
-              {/* Primary Location / Query Input */}
+              {/* Primary Location Input */}
               <div className="flex-1 flex items-center px-4 py-3 sm:py-2">
-                <Search className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
-                <div className="w-full">
-                  <label className="block text-[10px] font-bold uppercase text-gray-400 sm:hidden">
-                    Destination / Keyword
+                <Search className="h-5 w-5 text-[#00af87] mr-3 shrink-0" />
+                <div className="w-full text-left">
+                  <label className="block text-[10px] font-bold uppercase text-gray-500 sm:hidden">
+                    Destination or Keyword
                   </label>
                   <input
                     type="text"
@@ -113,23 +146,23 @@ export function HeroSection() {
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder={
                       activeTab === "all"
-                        ? "Places to go, things to do, hotels..."
+                        ? "Where to? e.g. Switzerland, Scotland, Amalfi, Bali..."
                         : activeTab === "hotels"
-                        ? "Where to? e.g. Maldives, Rome, London"
+                        ? "Destination or hotel name..."
                         : activeTab === "restaurants"
-                        ? "Restaurant or cuisine in..."
+                        ? "Cuisine, neighborhood or restaurant..."
                         : activeTab === "flights"
-                        ? "Destination airport or city..."
+                        ? "Departure or arrival city / airport..."
                         : activeTab === "holiday-homes"
-                        ? "Beach villa, mountain cabin..."
-                        : "Attraction or activity name..."
+                        ? "Beach villa, mountain chalet, apartment..."
+                        : "Tours, day trips, boat excursions..."
                     }
-                    className="w-full bg-transparent border-none outline-none text-sm sm:text-base text-gray-900 placeholder:text-gray-400 font-medium"
+                    className="w-full bg-transparent border-none outline-none text-sm sm:text-base text-gray-900 placeholder:text-gray-400 font-semibold"
                   />
                 </div>
               </div>
 
-              {/* Conditional secondary filters (Hotels / Rentals) */}
+              {/* Secondary Pickers for Stays/Villas */}
               {(activeTab === "hotels" || activeTab === "holiday-homes") && (
                 <>
                   <div className="flex items-center px-4 py-2 sm:py-1 cursor-pointer hover:bg-gray-50 sm:rounded-lg">
@@ -154,7 +187,7 @@ export function HeroSection() {
               <div className="pt-2 sm:pt-0 sm:pl-2">
                 <Button
                   type="submit"
-                  className="w-full sm:w-auto rounded-xl sm:rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-bold h-11 sm:h-12 px-7 text-sm sm:text-base transition-transform active:scale-95 shadow-md flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto rounded-xl sm:rounded-full bg-[#00af87] hover:bg-[#009673] text-white font-extrabold h-11 sm:h-12 px-8 text-sm sm:text-base shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
                 >
                   <span>Search</span>
                   <ArrowRight className="h-4 w-4" />
@@ -163,23 +196,25 @@ export function HeroSection() {
             </div>
           </form>
 
-          {/* Quick Trending Suggestions Bar */}
+          {/* Quick Trending Destination Tags */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-gray-500 font-semibold flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-amber-500" /> Popular now:
+            <span className="text-gray-200 font-bold flex items-center gap-1 drop-shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Trending Now:
             </span>
             {TRENDING_TAGS.map((tag) => (
               <button
                 key={tag.label}
                 type="button"
                 onClick={() => handleQuickTagClick(tag)}
-                className="px-3 py-1 rounded-full bg-white hover:bg-gray-100 text-gray-700 font-medium border border-gray-200 shadow-2xs transition-colors cursor-pointer"
+                className="px-3.5 py-1 rounded-full bg-black/60 hover:bg-black/80 text-gray-100 hover:text-white font-semibold border border-white/20 backdrop-blur-md transition-all shadow-xs cursor-pointer hover:scale-105 active:scale-95"
               >
                 {tag.label}
               </button>
             ))}
           </div>
         </div>
+
+
       </div>
     </section>
   );
