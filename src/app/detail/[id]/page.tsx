@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Header } from "@/components/layout/Header";
 import { BubbleRating } from "@/components/ui/rating";
 import { Button } from "@/components/ui/button";
 import { 
@@ -20,7 +19,6 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <main className="container mx-auto px-4 py-6">
         {/* Top Header Section */}

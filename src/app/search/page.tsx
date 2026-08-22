@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Header } from "@/components/layout/Header";
 import { BubbleRating } from "@/components/ui/rating";
 import { Button } from "@/components/ui/button";
 import { Map, List, Heart, ChevronLeft, ChevronRight, Check } from "lucide-react";
@@ -50,7 +49,6 @@ export default function SearchResultsPage() {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <Header />
       
       {/* Search Header / Map Toggle */}
       <div className="bg-white border-b border-gray-200 py-4 sticky top-20 z-40">
