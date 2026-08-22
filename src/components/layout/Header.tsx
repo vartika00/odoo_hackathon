@@ -12,7 +12,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-brand text-white rounded-full p-1.5 flex items-center justify-center h-10 w-10">
               {/* Simplified owl-like logo placeholder */}
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinelinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M8 14s1.5 2 4 2 4-2 4-2" />
                 <line x1="9" y1="9" x2="9.01" y2="9" />
@@ -52,9 +52,11 @@ export function Header() {
           <Button variant="ghost" size="icon" className="hidden lg:flex rounded-full hover:bg-gray-100">
             <Globe className="h-5 w-5" />
           </Button>
-          <Button className="rounded-full bg-black hover:bg-gray-800 text-white font-medium px-6 h-10 ml-2">
-            Sign in
-          </Button>
+          <Link href="/sign-in">
+            <Button className="rounded-full bg-black hover:bg-gray-800 text-white font-medium px-6 h-10 ml-2">
+              Sign in
+            </Button>
+          </Link>
         </div>
       </div>
 
