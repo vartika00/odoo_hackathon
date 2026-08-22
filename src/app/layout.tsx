@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Atlas: Real Travel Insights, Hotels, Flights & Restaurants",
-  description: "Discover real travel insights, hotels, flights, and restaurants.",
+  title: "Atlas: Your Local Guide to the World",
+  description: "Plan your next trip, read authentic traveler reviews, compare hotel prices across 200+ booking sites, and discover the best things to do.",
 };
 
 export const viewport: Viewport = {

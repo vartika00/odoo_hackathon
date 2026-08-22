@@ -247,25 +247,11 @@ export function Header() {
             </button>
 
             <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-              <div className="bg-[#00af87] text-white rounded-full p-2 flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 transition-transform group-hover:scale-105 shadow-sm">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <circle cx="8" cy="10" r="2" fill="currentColor" />
-                  <circle cx="16" cy="10" r="2" fill="currentColor" />
-                  <path d="M8 15s1.5 2 4 2 4-2 4-2" strokeWidth="2.2" />
-                </svg>
+              <div className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 transition-transform group-hover:scale-105 mix-blend-multiply rounded-full overflow-hidden">
+                <Image src="/images/atlas-logo.png" alt="Atlas Logo" width={48} height={48} className="object-cover scale-[1.3]" />
               </div>
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-gray-900">
-                Tripadvisor
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-gray-900 ml-1">
+                Atlas
               </span>
             </Link>
           </div>
@@ -508,24 +494,10 @@ export function Header() {
             {/* Drawer Header */}
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="bg-[#00af87] text-white rounded-full p-1.5 flex items-center justify-center h-8 w-8">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="8" cy="10" r="2" fill="currentColor" />
-                    <circle cx="16" cy="10" r="2" fill="currentColor" />
-                    <path d="M8 15s1.5 2 4 2 4-2 4-2" strokeWidth="2.2" />
-                  </svg>
+                <div className="flex items-center justify-center h-9 w-9 mix-blend-multiply rounded-full overflow-hidden">
+                  <Image src="/images/atlas-logo.png" alt="Atlas Logo" width={36} height={36} className="object-cover scale-[1.3]" />
                 </div>
-                <span className="text-xl font-black text-gray-900">Tripadvisor</span>
+                <span className="text-xl font-black text-gray-900 ml-1">Atlas</span>
               </div>
 
               <button
