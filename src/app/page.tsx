@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { DestinationCarousel } from "@/components/home/DestinationCarousel";
+import { MapNavigator } from "@/components/home/MapNavigator";
 import { FeaturedExperiences } from "@/components/home/FeaturedExperiences";
 import { TravelersChoiceBanner } from "@/components/home/TravelersChoiceBanner";
 import { RecentReviews } from "@/components/home/RecentReviews";
@@ -113,13 +114,13 @@ const MOCK_TRENDING_SUMMER = [
 export default function Home() {
   return (
     <main className="flex-1 bg-background overflow-x-hidden">
-      {/* Hero Search Section */}
+      {/* Hero Landing Section with Vintage World Map Background & Hotspot Beacons */}
       <HeroSection />
 
       {/* Quick Category Grid */}
       <CategoryGrid />
 
-      {/* Top Destinations Carousel with Gray Background */}
+      {/* Top Destinations Carousel with Soft Background */}
       <div className="bg-[#f8f9fa] border-y border-gray-200/70 my-6 sm:my-8">
         <DestinationCarousel
           title="Top destinations for your next holiday"
@@ -127,6 +128,9 @@ export default function Home() {
           destinations={MOCK_TOP_DESTINATIONS}
         />
       </div>
+
+      {/* Multi-Destination Map Navigator Expedition Planner */}
+      <MapNavigator />
 
       {/* Featured Experiences / Ways to Tour */}
       <FeaturedExperiences />
