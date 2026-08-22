@@ -130,7 +130,7 @@ const INITIAL_PROFILE_DATA = {
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState(INITIAL_PROFILE_DATA);
-  const [activeTab, setActiveTab] = useState<"overview" | "saved" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "trips" | "saved" | "settings">("overview");
 
   // Form edit states
   const [editName, setEditName] = useState(profile.name);
@@ -222,6 +222,17 @@ export default function ProfilePage() {
 
             <Button
               size="sm"
+              onClick={() => setActiveTab("trips")}
+              className={`rounded-2xl text-xs font-bold h-10 px-4 ${
+                activeTab === "trips" ? "bg-[#00af87] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Globe2 className="w-3.5 h-3.5 mr-1.5" />
+              <span>My Trips</span>
+            </Button>
+
+            <Button
+              size="sm"
               onClick={() => setActiveTab("saved")}
               className={`rounded-2xl text-xs font-bold h-10 px-4 ${
                 activeTab === "saved" ? "bg-[#00af87] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -306,6 +317,69 @@ export default function ProfilePage() {
                   <p className="text-xs text-gray-600 leading-relaxed">{r.body}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB TRIPS: PREPLANNED AND PREVIOUS (Feature: Screen 7 from Mockup) */}
+        {activeTab === "trips" && (
+          <div className="space-y-8">
+            {/* Preplanned Trips */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-6">
+              <div>
+                <h2 className="text-xl font-black text-gray-900">Preplanned / Upcoming Trips</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Trips you are currently planning or have booked.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((item) => (
+                  <div key={`upcoming-${item}`} className="rounded-3xl border border-gray-200 overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+                    <div className="relative h-40 w-full bg-gray-100">
+                      <Image src={profile.cover} alt="Trip" fill className="object-cover" />
+                      <div className="absolute top-2 left-2 bg-white/90 px-2 py-1 rounded-full text-[10px] font-bold text-gray-900 shadow-sm">
+                        Upcoming
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      <h4 className="font-black text-sm text-gray-900">European Grand Journey</h4>
+                      <p className="text-xs text-gray-500">Oct 05 - Oct 15, 2026</p>
+                      <Link href="/trips">
+                        <Button className="w-full mt-2 bg-[#00af87] hover:bg-[#009b77] text-white text-xs font-bold rounded-xl h-8">
+                          View Trip
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Previous Trips */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-2xs space-y-6">
+              <div>
+                <h2 className="text-xl font-black text-gray-900">Previous Trips</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Your past adventures.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((item) => (
+                  <div key={`prev-${item}`} className="rounded-3xl border border-gray-200 overflow-hidden bg-gray-50/50 shadow-sm hover:shadow-md transition">
+                    <div className="relative h-40 w-full bg-gray-200 grayscale-[30%]">
+                      <Image src={profile.avatar} alt="Trip" fill className="object-cover" />
+                      <div className="absolute top-2 left-2 bg-gray-900/80 text-white px-2 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                        Completed
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      <h4 className="font-black text-sm text-gray-900">Swiss Alps Retreat</h4>
+                      <p className="text-xs text-gray-500">Jan 12 - Jan 20, 2025</p>
+                      <Link href="/trips">
+                        <Button variant="outline" className="w-full mt-2 text-xs font-bold rounded-xl h-8 text-gray-700 border-gray-300">
+                          View Trip
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

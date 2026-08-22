@@ -5,6 +5,7 @@ import { MapNavigator } from "@/components/home/MapNavigator";
 import { FeaturedExperiences } from "@/components/home/FeaturedExperiences";
 import { TravelersChoiceBanner } from "@/components/home/TravelersChoiceBanner";
 import { RecentReviews } from "@/components/home/RecentReviews";
+import { PreviousTripsSection } from "@/components/home/PreviousTripsSection";
 
 const MOCK_TOP_DESTINATIONS = [
   {
@@ -128,6 +129,9 @@ export default function Home() {
           destinations={MOCK_TOP_DESTINATIONS}
         />
       </div>
+
+      {/* Previous Trips & Plan a trip */}
+      <PreviousTripsSection />
 
       {/* Multi-Destination Map Navigator Expedition Planner */}
       <MapNavigator />
